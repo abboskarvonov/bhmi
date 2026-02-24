@@ -1,12 +1,12 @@
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
+import RichEditor from "@/Components/ui/RichEditor";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { AboutCreateData } from "@/types/about";
 import renderError from "@/utils/RenderError";
 import { Head, useForm } from "@inertiajs/react";
 import { toast } from "sonner";
-import { Editor } from "@tinymce/tinymce-react";
 import {
     Select,
     SelectContent,
@@ -85,19 +85,13 @@ function Create() {
 
                             <div>
                                 <Label>Content</Label>
-                                <Editor
-                                    apiKey="s0vgoqkalulereysrmkj81mzmwi8gnefh974yy0emob0oj6m"
-                                    init={{
-                                        height: 300,
-                                        plugins:
-                                            "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount",
-                                        toolbar:
-                                            "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
-                                    }}
-                                    value={data.content || ""}
-                                    onEditorChange={(content) => {
-                                        setData("content", content);
-                                    }}
+                                <RichEditor
+                                    value={data.content}
+                                    onChange={(val) =>
+                                        setData("content", val)
+                                    }
+                                    placeholder="Kontent kiriting..."
+                                    minHeight={300}
                                 />
                                 {renderError(errors, "content")}
                             </div>

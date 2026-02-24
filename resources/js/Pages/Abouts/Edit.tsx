@@ -1,12 +1,11 @@
 import { About } from "@/types/about";
 import { Head, useForm } from "@inertiajs/react";
-import React from "react";
 import { toast } from "sonner";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Input } from "@/Components/ui/input";
 import renderError from "@/utils/RenderError";
 import { Label } from "@/Components/ui/label";
-import { Editor } from "@tinymce/tinymce-react";
+import RichEditor from "@/Components/ui/RichEditor";
 import {
     Select,
     SelectContent,
@@ -35,11 +34,11 @@ function Edit({ about }: { about: About }) {
         if (about.file_url) {
             put(route("abouts.removeFile", about.id), {
                 onSuccess: () => {
-                    toast.success("Fayl muvaffaqiyatli o’chirildi!");
+                    toast.success("Fayl muvaffaqiyatli o'chirildi!");
                     setData("file_url", "");
                 },
                 onError: () => {
-                    toast.error("Faylni o’chirishda xatolik yuz berdi.");
+                    toast.error("Faylni o'chirishda xatolik yuz berdi.");
                 },
             });
         }
@@ -59,6 +58,7 @@ function Edit({ about }: { about: About }) {
             },
         });
     };
+
     return (
         <AuthenticatedLayout
             header={
@@ -88,19 +88,13 @@ function Edit({ about }: { about: About }) {
 
                             <div>
                                 <Label>Content</Label>
-                                <Editor
-                                    apiKey="s0vgoqkalulereysrmkj81mzmwi8gnefh974yy0emob0oj6m"
-                                    init={{
-                                        height: 300,
-                                        plugins:
-                                            "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount",
-                                        toolbar:
-                                            "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
-                                    }}
+                                <RichEditor
                                     value={data.content || ""}
-                                    onEditorChange={(content) => {
-                                        setData("content", content);
-                                    }}
+                                    onChange={(val) =>
+                                        setData("content", val)
+                                    }
+                                    placeholder="Kontent kiriting..."
+                                    minHeight={300}
                                 />
                                 {renderError(errors, "content")}
                             </div>

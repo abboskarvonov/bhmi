@@ -1,11 +1,11 @@
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
+import RichEditor from "@/Components/ui/RichEditor";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import renderError from "@/utils/RenderError";
 import { Head, useForm } from "@inertiajs/react";
 import { toast } from "sonner";
-import { Editor } from "@tinymce/tinymce-react";
 import {
     Select,
     SelectContent,
@@ -54,7 +54,6 @@ function Create({ journals }: JournalProps) {
 
         if (data.file_url && data.file_url instanceof File) {
             formData.append("file_url", data.file_url);
-        } else if (typeof data.file_url === "string" && data.file_url !== "") {
         }
 
         return formData;
@@ -227,37 +226,25 @@ function Create({ journals }: JournalProps) {
                             <div className="grid grid-cols-2 gap-8">
                                 <div>
                                     <Label>Kalit so'zlar</Label>
-                                    <Editor
-                                        apiKey="s0vgoqkalulereysrmkj81mzmwi8gnefh974yy0emob0oj6m"
-                                        init={{
-                                            height: 300,
-                                            plugins:
-                                                "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount",
-                                            toolbar:
-                                                "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
-                                        }}
+                                    <RichEditor
                                         value={data.keywords || ""}
-                                        onEditorChange={(content) => {
-                                            setData("keywords", content);
-                                        }}
+                                        onChange={(val) =>
+                                            setData("keywords", val)
+                                        }
+                                        placeholder="Kalit so'zlarni kiriting..."
+                                        minHeight={200}
                                     />
                                     {renderError(errors, "keywords")}
                                 </div>
                                 <div>
                                     <Label>Annotatsiya</Label>
-                                    <Editor
-                                        apiKey="s0vgoqkalulereysrmkj81mzmwi8gnefh974yy0emob0oj6m"
-                                        init={{
-                                            height: 300,
-                                            plugins:
-                                                "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount",
-                                            toolbar:
-                                                "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
-                                        }}
+                                    <RichEditor
                                         value={data.annotations || ""}
-                                        onEditorChange={(content) => {
-                                            setData("annotations", content);
-                                        }}
+                                        onChange={(val) =>
+                                            setData("annotations", val)
+                                        }
+                                        placeholder="Annotatsiya kiriting..."
+                                        minHeight={200}
                                     />
                                     {renderError(errors, "annotations")}
                                 </div>
