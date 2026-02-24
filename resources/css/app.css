@@ -102,3 +102,8 @@
   content: attr(data-placeholder);
   @apply text-gray-400 dark:text-gray-500 float-left h-0 pointer-events-none;
 }
+/* Highlight */
+.tiptap-content .ProseMirror mark {
+  border-radius: 2px;
+  padding: 0 2px;
+}

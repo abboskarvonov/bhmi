@@ -4,6 +4,10 @@ import UnderlineExt from "@tiptap/extension-underline";
 import LinkExt from "@tiptap/extension-link";
 import TextAlignExt from "@tiptap/extension-text-align";
 import PlaceholderExt from "@tiptap/extension-placeholder";
+import TextStyleExt from "@tiptap/extension-text-style";
+import FontFamilyExt from "@tiptap/extension-font-family";
+import ColorExt from "@tiptap/extension-color";
+import HighlightExt from "@tiptap/extension-highlight";
 import { useCallback, useEffect, useRef } from "react";
 import {
     AlignCenter,
@@ -14,6 +18,7 @@ import {
     Eraser,
     Heading2,
     Heading3,
+    Highlighter,
     Italic,
     Link,
     List,
@@ -25,6 +30,16 @@ import {
     Undo2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const FONT_FAMILIES = [
+    { label: "Standart", value: "" },
+    { label: "Arial", value: "Arial, sans-serif" },
+    { label: "Times New Roman", value: "Times New Roman, serif" },
+    { label: "Courier New", value: "Courier New, monospace" },
+    { label: "Georgia", value: "Georgia, serif" },
+    { label: "Verdana", value: "Verdana, sans-serif" },
+    { label: "Tahoma", value: "Tahoma, sans-serif" },
+];
 
 interface RichEditorProps {
     value: string;
@@ -99,6 +114,10 @@ export function RichEditor({
             PlaceholderExt.configure({
                 placeholder: placeholder ?? "Matn kiriting...",
             }),
+            TextStyleExt,
+            FontFamilyExt,
+            ColorExt,
+            HighlightExt.configure({ multicolor: true }),
         ],
         content: value,
         onUpdate: ({ editor }) => {
@@ -111,8 +130,6 @@ export function RichEditor({
         },
     });
 
-    // Tashqaridan o'zgarish bo'lsa sinxronlashtirish
-    // (masalan, forma reset bo'lganda)
     useEffect(() => {
         if (!editor) return;
         if (value !== lastValue.current && !editor.isFocused) {
@@ -138,12 +155,17 @@ export function RichEditor({
             .run();
     }, [editor]);
 
+    const currentFontFamily =
+        (editor?.getAttributes("textStyle").fontFamily as string | undefined) ??
+        "";
+
     if (!editor) return null;
 
     return (
         <div className="overflow-hidden rounded-md border border-gray-300 dark:border-gray-600">
             {/* Toolbar */}
             <div className="flex flex-wrap items-center gap-0.5 border-b border-gray-200 bg-gray-50 px-2 py-1.5 dark:border-gray-600 dark:bg-gray-700">
+
                 {/* Orqaga / Oldinga */}
                 <ToolbarBtn
                     onClick={() => editor.chain().focus().undo().run()}
@@ -162,6 +184,29 @@ export function RichEditor({
 
                 <Sep />
 
+                {/* Font family */}
+                <select
+                    value={currentFontFamily}
+                    onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === "") {
+                            editor.chain().focus().unsetFontFamily().run();
+                        } else {
+                            editor.chain().focus().setFontFamily(val).run();
+                        }
+                    }}
+                    title="Shrift turi"
+                    className="h-7 rounded border border-gray-300 bg-white px-1 text-xs text-gray-700 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+                >
+                    {FONT_FAMILIES.map((f) => (
+                        <option key={f.value} value={f.value}>
+                            {f.label}
+                        </option>
+                    ))}
+                </select>
+
+                <Sep />
+
                 {/* Sarlavhalar */}
                 <ToolbarBtn
                     onClick={() =>
@@ -174,11 +219,7 @@ export function RichEditor({
                 </ToolbarBtn>
                 <ToolbarBtn
                     onClick={() =>
-                        editor
-                            .chain()
-                            .focus()
-                            .toggleHeading({ level: 2 })
-                            .run()
+                        editor.chain().focus().toggleHeading({ level: 2 }).run()
                     }
                     active={editor.isActive("heading", { level: 2 })}
                     title="Sarlavha H2"
@@ -187,11 +228,7 @@ export function RichEditor({
                 </ToolbarBtn>
                 <ToolbarBtn
                     onClick={() =>
-                        editor
-                            .chain()
-                            .focus()
-                            .toggleHeading({ level: 3 })
-                            .run()
+                        editor.chain().focus().toggleHeading({ level: 3 }).run()
                     }
                     active={editor.isActive("heading", { level: 3 })}
                     title="Sarlavha H3"
@@ -203,18 +240,14 @@ export function RichEditor({
 
                 {/* Matn formatlash */}
                 <ToolbarBtn
-                    onClick={() =>
-                        editor.chain().focus().toggleBold().run()
-                    }
+                    onClick={() => editor.chain().focus().toggleBold().run()}
                     active={editor.isActive("bold")}
                     title="Qalin (Ctrl+B)"
                 >
                     <Bold size={14} />
                 </ToolbarBtn>
                 <ToolbarBtn
-                    onClick={() =>
-                        editor.chain().focus().toggleItalic().run()
-                    }
+                    onClick={() => editor.chain().focus().toggleItalic().run()}
                     active={editor.isActive("italic")}
                     title="Kursiv (Ctrl+I)"
                 >
@@ -230,14 +263,83 @@ export function RichEditor({
                     <Underline size={14} />
                 </ToolbarBtn>
                 <ToolbarBtn
-                    onClick={() =>
-                        editor.chain().focus().toggleStrike().run()
-                    }
+                    onClick={() => editor.chain().focus().toggleStrike().run()}
                     active={editor.isActive("strike")}
                     title="Ustiga chiziq"
                 >
                     <Strikethrough size={14} />
                 </ToolbarBtn>
+
+                <Sep />
+
+                {/* Matn rangi */}
+                <label
+                    title="Matn rangi"
+                    className="relative flex cursor-pointer items-center"
+                >
+                    <span className="rounded p-1.5 text-gray-600 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-600">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M9 7l-5 13h2.5l1.5-4h8l1.5 4H20L15 7H9z"/>
+                            <path d="M7.5 14l4.5-7 4.5 7"/>
+                        </svg>
+                    </span>
+                    <div
+                        className="absolute bottom-0.5 left-1 right-1 h-1 rounded"
+                        style={{
+                            backgroundColor:
+                                (editor.getAttributes("textStyle")
+                                    .color as string) || "#000000",
+                        }}
+                    />
+                    <input
+                        type="color"
+                        className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                        value={
+                            (editor.getAttributes("textStyle")
+                                .color as string) || "#000000"
+                        }
+                        onChange={(e) => {
+                            editor
+                                .chain()
+                                .focus()
+                                .setColor(e.target.value)
+                                .run();
+                        }}
+                    />
+                </label>
+
+                {/* Highlight rangi */}
+                <label
+                    title="Matn fon rangi (highlight)"
+                    className="relative flex cursor-pointer items-center"
+                >
+                    <span className="rounded p-1.5 text-gray-600 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-600">
+                        <Highlighter size={14} />
+                    </span>
+                    <div
+                        className="absolute bottom-0.5 left-1 right-1 h-1 rounded"
+                        style={{
+                            backgroundColor:
+                                (editor.getAttributes("highlight")
+                                    .color as string) || "#ffff00",
+                        }}
+                    />
+                    <input
+                        type="color"
+                        className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                        value={
+                            (editor.getAttributes("highlight")
+                                .color as string) || "#ffff00"
+                        }
+                        onChange={(e) => {
+                            editor
+                                .chain()
+                                .focus()
+                                .setHighlight({ color: e.target.value })
+                                .run();
+                        }}
+                    />
+                </label>
 
                 <Sep />
 
