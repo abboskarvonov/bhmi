@@ -30,8 +30,12 @@ export interface ArchiveProps {
 
 function Archive({ archives, articles }: ArchiveProps) {
     const { data, current_page, last_page, total } = archives;
+
     return (
-        <MainLayout title="Jurnal sonlari">
+        <MainLayout
+            title="Jurnal sonlari"
+            description="BHMI — Buxlateriya hisobi va moliyaviy iqtisod jurnalining barcha sonlari arxivi."
+        >
             <Breadcrumb title="Jurnal sonlari" />
             <div className="container mx-auto grid min-h-[550px] max-w-7xl grid-cols-1 gap-10 px-8 py-16 md:grid-cols-3 lg:gap-16 lg:px-1">
                 <div className="col-span-1 md:col-span-2">
@@ -47,7 +51,7 @@ function Archive({ archives, articles }: ArchiveProps) {
                                 <CardContent>
                                     <div className="flex items-center gap-8">
                                         <div className="flex items-center gap-2">
-                                            <FaCalendarDays />
+                                            <FaCalendarDays aria-hidden="true" />
                                             <span className="text-sm">
                                                 {format(
                                                     archive.date,
@@ -75,17 +79,19 @@ function Archive({ archives, articles }: ArchiveProps) {
                                         ? `/archive?page=${current_page - 1}`
                                         : "#"
                                 }
+                                aria-label="Oldingi sahifa"
                             >
                                 <Button
                                     variant={"outline"}
                                     size={"icon"}
-                                    className={`${
+                                    disabled={current_page === 1}
+                                    className={
                                         current_page === 1
                                             ? "cursor-not-allowed opacity-50"
                                             : ""
-                                    } `}
+                                    }
                                 >
-                                    <FaAngleLeft />
+                                    <FaAngleLeft aria-hidden="true" />
                                 </Button>
                             </Link>
 
@@ -96,6 +102,7 @@ function Archive({ archives, articles }: ArchiveProps) {
                                         <Link
                                             key={page}
                                             href={`/archive?page=${page}`}
+                                            aria-label={`${page}-sahifa`}
                                         >
                                             <Button
                                                 variant={
@@ -104,6 +111,11 @@ function Archive({ archives, articles }: ArchiveProps) {
                                                         : "outline"
                                                 }
                                                 size={"icon"}
+                                                aria-current={
+                                                    page === current_page
+                                                        ? "page"
+                                                        : undefined
+                                                }
                                             >
                                                 {page}
                                             </Button>
@@ -118,17 +130,19 @@ function Archive({ archives, articles }: ArchiveProps) {
                                         ? `/archive?page=${current_page + 1}`
                                         : "#"
                                 }
+                                aria-label="Keyingi sahifa"
                             >
                                 <Button
                                     variant={"outline"}
                                     size={"icon"}
-                                    className={`${
+                                    disabled={current_page === last_page}
+                                    className={
                                         current_page === last_page
                                             ? "cursor-not-allowed opacity-50"
                                             : ""
-                                    } `}
+                                    }
                                 >
-                                    <FaAngleRight />
+                                    <FaAngleRight aria-hidden="true" />
                                 </Button>
                             </Link>
                         </div>

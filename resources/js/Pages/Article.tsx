@@ -23,7 +23,10 @@ function Article({ articles }: ArticleIndexProps) {
     const { data, current_page, last_page, total } = articles;
 
     return (
-        <MainLayout title="Maqolalar">
+        <MainLayout
+            title="Maqolalar"
+            description="BHMI jurnalida chop etilgan barcha ilmiy maqolalar. Buxlateriya hisobi va moliyaviy iqtisod sohasidagi tadqiqotlar."
+        >
             <Breadcrumb title="Maqolalar" />
             <div className="container mx-auto grid min-h-[550px] max-w-7xl grid-cols-1 gap-10 px-8 py-16 md:grid-cols-3 lg:gap-16 lg:px-1">
                 <div className="col-span-1 md:col-span-2">
@@ -39,7 +42,7 @@ function Article({ articles }: ArticleIndexProps) {
                                 <CardContent>
                                     <div className="flex items-center gap-8">
                                         <div className="flex items-center gap-2">
-                                            <FaCalendarDays />
+                                            <FaCalendarDays aria-hidden="true" />
                                             <span className="text-sm">
                                                 {format(
                                                     article.date,
@@ -48,7 +51,7 @@ function Article({ articles }: ArticleIndexProps) {
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-2">
-                                            <FaUserTie />
+                                            <FaUserTie aria-hidden="true" />
                                             <span className="text-sm">
                                                 {article.author}
                                             </span>
@@ -73,17 +76,19 @@ function Article({ articles }: ArticleIndexProps) {
                                         ? `/article?page=${current_page - 1}`
                                         : "#"
                                 }
+                                aria-label="Oldingi sahifa"
                             >
                                 <Button
                                     variant={"outline"}
                                     size={"icon"}
-                                    className={`${
+                                    disabled={current_page === 1}
+                                    className={
                                         current_page === 1
                                             ? "cursor-not-allowed opacity-50"
                                             : ""
-                                    } `}
+                                    }
                                 >
-                                    <FaAngleLeft />
+                                    <FaAngleLeft aria-hidden="true" />
                                 </Button>
                             </Link>
 
@@ -94,6 +99,7 @@ function Article({ articles }: ArticleIndexProps) {
                                         <Link
                                             key={page}
                                             href={`/article?page=${page}`}
+                                            aria-label={`${page}-sahifa`}
                                         >
                                             <Button
                                                 variant={
@@ -102,6 +108,11 @@ function Article({ articles }: ArticleIndexProps) {
                                                         : "outline"
                                                 }
                                                 size={"icon"}
+                                                aria-current={
+                                                    page === current_page
+                                                        ? "page"
+                                                        : undefined
+                                                }
                                             >
                                                 {page}
                                             </Button>
@@ -116,17 +127,19 @@ function Article({ articles }: ArticleIndexProps) {
                                         ? `/article?page=${current_page + 1}`
                                         : "#"
                                 }
+                                aria-label="Keyingi sahifa"
                             >
                                 <Button
                                     variant={"outline"}
                                     size={"icon"}
-                                    className={`${
+                                    disabled={current_page === last_page}
+                                    className={
                                         current_page === last_page
                                             ? "cursor-not-allowed opacity-50"
                                             : ""
-                                    } `}
+                                    }
                                 >
-                                    <FaAngleRight />
+                                    <FaAngleRight aria-hidden="true" />
                                 </Button>
                             </Link>
                         </div>

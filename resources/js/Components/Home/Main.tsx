@@ -19,9 +19,9 @@ function Main({ about, journals, articles }: Props) {
         <div className="container mx-auto grid max-w-7xl grid-cols-1 gap-10 px-8 py-16 md:grid-cols-3 lg:gap-16 lg:px-1">
             <div className="col-span-1 md:col-span-2">
                 <div>
-                    <h1 className="mb-6 border-b-2 border-gray-600 pb-2 text-2xl font-semibold">
+                    <h2 className="mb-6 border-b-2 border-gray-600 pb-2 text-2xl font-semibold">
                         Journal haqida
-                    </h1>
+                    </h2>
                     <div
                         className="space-y-3"
                         dangerouslySetInnerHTML={{ __html: about.content }}
@@ -29,9 +29,9 @@ function Main({ about, journals, articles }: Props) {
                 </div>
 
                 <div className="lg:mt-22 mt-8 md:mt-16">
-                    <h1 className="mb-10 border-b-2 border-gray-600 pb-2 text-2xl font-semibold">
+                    <h2 className="mb-10 border-b-2 border-gray-600 pb-2 text-2xl font-semibold">
                         Jurnal sonlari
-                    </h1>
+                    </h2>
                     <div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
                         {journals.map((journal) => (
                             <Card className="relative" key={journal.id}>

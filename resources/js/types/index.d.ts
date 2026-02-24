@@ -17,4 +17,6 @@ export type PageProps<
 export interface LayoutProps {
     children: React.ReactNode;
     title: string;
+    description?: string;
+    ogImage?: string;
 }

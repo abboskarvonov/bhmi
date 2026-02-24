@@ -12,9 +12,9 @@ interface Props {
 function Right({ articles }: Props) {
     return (
         <div className="col-span-1">
-            <h1 className="mb-6 border-b-2 border-gray-600 pb-2 text-2xl font-semibold ">
+            <h2 className="mb-6 border-b-2 border-gray-600 pb-2 text-2xl font-semibold">
                 So'nggi maqolalar
-            </h1>
+            </h2>
             <div className="space-y-5">
                 {articles.map((article) => (
                     <Card key={article.id}>

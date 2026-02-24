@@ -14,7 +14,10 @@ function Hero({ latest_journal }: { latest_journal: Journal }) {
                             <img
                                 src="/img/logo.webp"
                                 className="w-40"
-                                alt="JMBM Logo"
+                                alt="BHMI jurnal logotipi"
+                                width={160}
+                                height={60}
+                                loading="eager"
                             />
                             <h1 className="text-2xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-4xl lg:text-3xl">
                                 <span className="block xl:inline">
@@ -23,12 +26,16 @@ function Hero({ latest_journal }: { latest_journal: Journal }) {
                                 </span>
                             </h1>
                             <p className="mx-auto flex items-center gap-2 text-gray-500 sm:max-w-md md:max-w-3xl lg:text-xl">
-                                <FaPhoneAlt />
-                                +998 93 727 95 55
+                                <FaPhoneAlt aria-hidden="true" />
+                                <a href="tel:+998937279555">
+                                    +998 93 727 95 55
+                                </a>
                             </p>
                             <p className="mx-auto flex items-center gap-2 text-gray-500 sm:max-w-md md:max-w-3xl lg:text-xl">
-                                <FaEnvelope />
-                                buxglateriyahisobi@gmail.com
+                                <FaEnvelope aria-hidden="true" />
+                                <a href="mailto:buxglateriyahisobi@gmail.com">
+                                    buxglateriyahisobi@gmail.com
+                                </a>
                             </p>
                             <div className="relative flex flex-col gap-4 sm:flex-row sm:space-x-4">
                                 {latest_journal && (
@@ -36,7 +43,7 @@ function Hero({ latest_journal }: { latest_journal: Journal }) {
                                         href={`/archive/${latest_journal.slug}`}
                                     >
                                         <Button size={"lg"}>
-                                            Oxirgi son <FaArrowRight />
+                                            Oxirgi son <FaArrowRight aria-hidden="true" />
                                         </Button>
                                     </Link>
                                 )}
@@ -49,15 +56,17 @@ function Hero({ latest_journal }: { latest_journal: Journal }) {
                         </div>
                     </div>
                     <div className="w-full md:w-2/5 lg:w-2/6">
-                        <div
-                            className="h-auto w-full overflow-hidden rounded-md shadow-xl sm:rounded-xl"
-                            data-rounded="rounded-xl"
-                            data-rounded-max="rounded-full"
-                        >
+                        <div className="h-auto w-full overflow-hidden rounded-md shadow-xl sm:rounded-xl">
+                            {/* LCP elementi — fetchpriority="high", lazy loading o'chirilgan */}
                             <img
                                 src="/img/page.webp"
                                 className="h-[530px] w-full object-cover"
-                                alt="Page journal"
+                                alt="BHMI jurnal sahifasi"
+                                width={480}
+                                height={530}
+                                fetchPriority="high"
+                                loading="eager"
+                                decoding="async"
                             />
                         </div>
                     </div>

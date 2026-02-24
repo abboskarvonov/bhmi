@@ -10,9 +10,9 @@ function Footer() {
         <section className="bg-gray-200">
             <div className="mx-auto max-w-screen-xl space-y-8 overflow-hidden px-4 py-12 sm:px-6 lg:px-8">
                 <div className="mx-auto grid max-w-2xl gap-6">
-                    <h1 className="text-xl font-semibold">
+                    <h2 className="text-xl font-semibold">
                         Bog'lanish uchun ma'lumotlar
-                    </h1>
+                    </h2>
                     <p className="flex items-center gap-2">
                         <FaLocationDot size={22} /> Samarqand viloyati,
                         Samarqand shahri, Obod maskan mfy, Qorasuv mavzesi,
@@ -26,7 +26,9 @@ function Footer() {
                         <a
                             href="https://t.me/BHMIJ_UZ"
                             target="_blank"
+                            rel="noopener noreferrer"
                             className="hover:text-gray-700"
+                            aria-label="Telegram kanalimiz"
                         >
                             https://t.me/BHMIJ_UZ
                         </a>

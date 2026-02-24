@@ -10,4 +10,16 @@ export default defineConfig({
         }),
         react(),
     ],
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'vendor-react': ['react', 'react-dom'],
+                    'vendor-inertia': ['@inertiajs/react'],
+                    'vendor-tinymce': ['@tinymce/tinymce-react'],
+                    'vendor-utils': ['date-fns', 'clsx', 'tailwind-merge'],
+                },
+            },
+        },
+    },
 });

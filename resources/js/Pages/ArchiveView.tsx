@@ -21,26 +21,31 @@ interface Props {
 }
 
 function ArchiveView({ journal, articles }: Props) {
+    const description = `${journal.name} — BHMI jurnalining ushbu sonida ${journal.articles?.length ?? 0} ta ilmiy maqola mavjud.`;
+
     return (
-        <MainLayout title={journal.name}>
+        <MainLayout title={journal.name} description={description}>
             <Breadcrumb title={journal.name} />
             <div className="container mx-auto grid min-h-[550px] max-w-7xl grid-cols-1 gap-10 px-8 py-16 md:grid-cols-3 lg:gap-16 lg:px-1">
                 <div className="col-span-1 space-y-5 md:col-span-2">
                     <h1 className="inline-block border-b border-b-gray-600 pb-2 text-xl font-semibold">
                         {journal.name}
                     </h1>
-                    <div>
-                        <a
-                            href={`/storage/${journal.file_url}`}
-                            target="_blank"
-                        >
-                            <Button>Jurnalni yuklash</Button>
-                        </a>
-                    </div>
+                    {journal.file_url && (
+                        <div>
+                            <a
+                                href={`/storage/${journal.file_url}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <Button>Jurnalni yuklash</Button>
+                            </a>
+                        </div>
+                    )}
                     <div className="border-t border-t-gray-700">
-                        <h1 className="py-4 text-xl font-semibold">
+                        <h2 className="py-4 text-xl font-semibold">
                             Jurnaldagi maqolalar
-                        </h1>
+                        </h2>
                         <div>
                             {journal.articles.map((article) => (
                                 <Card key={article.id}>
@@ -50,7 +55,7 @@ function ArchiveView({ journal, articles }: Props) {
                                     <CardContent>
                                         <div className="flex items-center gap-8">
                                             <div className="flex items-center gap-2">
-                                                <FaCalendarDays />
+                                                <FaCalendarDays aria-hidden="true" />
                                                 <span className="text-sm">
                                                     {format(
                                                         article.date,
@@ -59,7 +64,7 @@ function ArchiveView({ journal, articles }: Props) {
                                                 </span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <FaUserTie />
+                                                <FaUserTie aria-hidden="true" />
                                                 <span className="text-sm">
                                                     {article.author}
                                                 </span>
