@@ -4,7 +4,7 @@ import UnderlineExt from "@tiptap/extension-underline";
 import LinkExt from "@tiptap/extension-link";
 import TextAlignExt from "@tiptap/extension-text-align";
 import PlaceholderExt from "@tiptap/extension-placeholder";
-import TextStyleExt from "@tiptap/extension-text-style";
+import { TextStyle as TextStyleExt } from "@tiptap/extension-text-style";
 import FontFamilyExt from "@tiptap/extension-font-family";
 import ColorExt from "@tiptap/extension-color";
 import HighlightExt from "@tiptap/extension-highlight";
