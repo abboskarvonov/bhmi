@@ -134,7 +134,7 @@ export function RichEditor({
         if (!editor) return;
         if (value !== lastValue.current && !editor.isFocused) {
             lastValue.current = value;
-            editor.commands.setContent(value || "", false);
+            editor.commands.setContent(value || "", { emitUpdate: false });
         }
     }, [value, editor]);
 

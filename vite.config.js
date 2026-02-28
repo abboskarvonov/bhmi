@@ -16,7 +16,7 @@ export default defineConfig({
                 manualChunks: {
                     'vendor-react': ['react', 'react-dom'],
                     'vendor-inertia': ['@inertiajs/react'],
-                    'vendor-tiptap': ['@tiptap/react', '@tiptap/pm', '@tiptap/starter-kit'],
+                    'vendor-tiptap': ['@tiptap/react', '@tiptap/starter-kit'],
                     'vendor-utils': ['date-fns', 'clsx', 'tailwind-merge'],
                 },
             },

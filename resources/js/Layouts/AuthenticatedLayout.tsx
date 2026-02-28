@@ -67,6 +67,14 @@ export default function Authenticated({
                                         >
                                             Maqolalar
                                         </NavLink>
+                                        <NavLink
+                                            href={route("submissions.admin.index")}
+                                            active={route().current(
+                                                "submissions.admin.*",
+                                            )}
+                                        >
+                                            Arizalar
+                                        </NavLink>
                                     </>
                                 )}
                             </div>

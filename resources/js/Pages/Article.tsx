@@ -1,13 +1,5 @@
 import Breadcrumb from "@/Components/Custom/Breadcrumb";
 import Right from "@/Components/Home/Right";
-import { Button } from "@/Components/ui/button";
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/Components/ui/card";
 import MainLayout from "@/Layouts/MainLayout";
 import { ArticleIndexProps } from "@/types/article";
 import { Link } from "@inertiajs/react";
@@ -15,7 +7,9 @@ import { format } from "date-fns";
 import {
     FaAngleLeft,
     FaAngleRight,
+    FaArrowRight,
     FaCalendarDays,
+    FaFileLines,
     FaUserTie,
 } from "react-icons/fa6";
 
@@ -28,71 +22,83 @@ function Article({ articles }: ArticleIndexProps) {
             description="BHMI jurnalida chop etilgan barcha ilmiy maqolalar. Buxlateriya hisobi va moliyaviy iqtisod sohasidagi tadqiqotlar."
         >
             <Breadcrumb title="Maqolalar" />
-            <div className="container mx-auto grid min-h-[550px] max-w-7xl grid-cols-1 gap-10 px-8 py-16 md:grid-cols-3 lg:gap-16 lg:px-1">
+
+            <div className="bg-gray-100">
+            <div className="container mx-auto grid min-h-[550px] max-w-7xl grid-cols-1 gap-10 px-6 py-16 md:grid-cols-3 lg:gap-16 lg:px-4">
                 <div className="col-span-1 md:col-span-2">
-                    <h1 className="inline-block border-b border-b-gray-600 pb-2 text-xl font-semibold">
-                        Maqolalar
-                    </h1>
-                    <div className="space-y-6 py-6">
-                        {data.map((article) => (
-                            <Card key={article.id}>
-                                <CardHeader>
-                                    <CardTitle>{article.name}</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="flex items-center gap-8">
-                                        <div className="flex items-center gap-2">
-                                            <FaCalendarDays aria-hidden="true" />
-                                            <span className="text-sm">
-                                                {format(
-                                                    article.date,
-                                                    "MM-dd-yyyy",
+                    <div className="mb-8 flex items-center gap-3">
+                        <div className="h-8 w-1 rounded-full bg-gradient-to-b from-emerald-700 to-teal-600" />
+                        <h2 className="text-2xl font-bold text-gray-900">
+                            Barcha maqolalar
+                        </h2>
+                    </div>
+
+                    <div className="space-y-4">
+                        {data.map((article, index) => {
+                            return (
+                                <Link
+                                    key={article.id}
+                                    href={`/article/${article.slug}`}
+                                    className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:border-emerald-300 hover:shadow-xl"
+                                >
+                                    {/* Top accent bar */}
+                                    <div className="h-0.5 w-full origin-left scale-x-0 bg-gradient-to-r from-emerald-600 to-teal-500 transition-transform duration-300 group-hover:scale-x-100" />
+
+                                    <div className="flex items-center gap-4 p-5">
+                                        {/* Number badge */}
+                                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-sm font-bold text-emerald-700 ring-1 ring-emerald-200/70 transition-all group-hover:bg-emerald-700 group-hover:text-white group-hover:ring-emerald-700">
+                                            {(current_page - 1) * 10 + index + 1}
+                                        </span>
+
+                                        <div className="min-w-0 flex-1">
+                                            {/* Title */}
+                                            <h3 className="font-bold leading-snug text-gray-900 transition-colors group-hover:text-emerald-800">
+                                                {article.name}
+                                            </h3>
+
+                                            {/* Meta row */}
+                                            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-500">
+                                                <span className="flex items-center gap-1.5">
+                                                    <FaUserTie className="h-3 w-3 shrink-0 text-emerald-500" />
+                                                    {article.author}
+                                                </span>
+                                                <span className="flex items-center gap-1.5">
+                                                    <FaCalendarDays className="h-3 w-3 shrink-0 text-emerald-500" />
+                                                    {format(article.date, "dd.MM.yyyy")}
+                                                </span>
+                                                {article.pages && (
+                                                    <span className="flex items-center gap-1.5">
+                                                        <FaFileLines className="h-3 w-3 shrink-0 text-emerald-500" />
+                                                        {article.pages}
+                                                    </span>
                                                 )}
-                                            </span>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <FaUserTie aria-hidden="true" />
-                                            <span className="text-sm">
-                                                {article.author}
-                                            </span>
-                                        </div>
+
+                                        {/* Arrow */}
+                                        <FaArrowRight className="h-4 w-4 shrink-0 text-gray-300 transition-all group-hover:translate-x-0.5 group-hover:text-emerald-600" />
                                     </div>
-                                </CardContent>
-                                <CardFooter>
-                                    <Link href={`/article/${article.slug}`}>
-                                        <Button>Batafsil</Button>
-                                    </Link>
-                                </CardFooter>
-                            </Card>
-                        ))}
+                                </Link>
+                            );
+                        })}
                     </div>
 
                     {/* Pagination */}
                     {total > 10 && (
                         <div className="mt-10 flex items-center justify-center gap-2">
                             <Link
-                                href={
-                                    current_page !== 1
-                                        ? `/article?page=${current_page - 1}`
-                                        : "#"
-                                }
+                                href={current_page !== 1 ? `/article?page=${current_page - 1}` : "#"}
                                 aria-label="Oldingi sahifa"
                             >
-                                <Button
-                                    variant={"outline"}
-                                    size={"icon"}
+                                <button
                                     disabled={current_page === 1}
-                                    className={
-                                        current_page === 1
-                                            ? "cursor-not-allowed opacity-50"
-                                            : ""
-                                    }
+                                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition-all hover:border-emerald-300 hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
                                 >
-                                    <FaAngleLeft aria-hidden="true" />
-                                </Button>
+                                    <FaAngleLeft className="h-3.5 w-3.5" />
+                                </button>
                             </Link>
 
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center gap-1.5">
                                 {[...Array(last_page)].map((_, index) => {
                                     const page = index + 1;
                                     return (
@@ -101,51 +107,38 @@ function Article({ articles }: ArticleIndexProps) {
                                             href={`/article?page=${page}`}
                                             aria-label={`${page}-sahifa`}
                                         >
-                                            <Button
-                                                variant={
+                                            <button
+                                                className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all ${
                                                     page === current_page
-                                                        ? "default"
-                                                        : "outline"
-                                                }
-                                                size={"icon"}
-                                                aria-current={
-                                                    page === current_page
-                                                        ? "page"
-                                                        : undefined
-                                                }
+                                                        ? "bg-emerald-700 text-white shadow-sm"
+                                                        : "border border-gray-200 text-gray-600 hover:border-emerald-300 hover:text-emerald-700"
+                                                }`}
+                                                aria-current={page === current_page ? "page" : undefined}
                                             >
                                                 {page}
-                                            </Button>
+                                            </button>
                                         </Link>
                                     );
                                 })}
                             </div>
 
                             <Link
-                                href={
-                                    current_page !== last_page
-                                        ? `/article?page=${current_page + 1}`
-                                        : "#"
-                                }
+                                href={current_page !== last_page ? `/article?page=${current_page + 1}` : "#"}
                                 aria-label="Keyingi sahifa"
                             >
-                                <Button
-                                    variant={"outline"}
-                                    size={"icon"}
+                                <button
                                     disabled={current_page === last_page}
-                                    className={
-                                        current_page === last_page
-                                            ? "cursor-not-allowed opacity-50"
-                                            : ""
-                                    }
+                                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition-all hover:border-emerald-300 hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
                                 >
-                                    <FaAngleRight aria-hidden="true" />
-                                </Button>
+                                    <FaAngleRight className="h-3.5 w-3.5" />
+                                </button>
                             </Link>
                         </div>
                     )}
                 </div>
+
                 <Right articles={data.slice(0, 5)} />
+            </div>
             </div>
         </MainLayout>
     );

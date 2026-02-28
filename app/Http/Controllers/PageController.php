@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\About;
 use App\Models\Article;
 use App\Models\JournalIssue;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -14,7 +15,7 @@ class PageController extends Controller
     {
         $about = About::where('type', 'Jurnal haqida')->first();
         $journals = JournalIssue::latest()->take(4)->get();
-        $articles = Article::latest()->take(5)->get();
+        $articles = Article::latest()->take(10)->get();
         return Inertia::render('Welcome', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
@@ -67,11 +68,35 @@ class PageController extends Controller
 
     public function articleview(string $slug)
     {
-        $article = Article::where('slug', $slug)->firstOrFail();
+        $article = Article::with('journal')->where('slug', $slug)->firstOrFail();
+
+        // Same journal OR same author, excluding current, random 4
+        $related = Article::with('journal')
+            ->where('id', '!=', $article->id)
+            ->where(function ($q) use ($article) {
+                $q->where('journal_issue_id', $article->journal_issue_id)
+                  ->orWhere('author', $article->author);
+            })
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+
+        // Fill to 4 if not enough
+        if ($related->count() < 4) {
+            $fill = Article::with('journal')
+                ->whereNotIn('id', $related->pluck('id')->push($article->id))
+                ->latest()
+                ->take(4 - $related->count())
+                ->get();
+            $related = $related->merge($fill);
+        }
+
         $articles = Article::latest()->take(5)->get();
+
         return Inertia::render('ArticleView', [
-            'article' => $article,
-            'articles' => $articles,
+            'article'          => $article,
+            'related_articles' => $related,
+            'articles'         => $articles,
         ]);
     }
 
@@ -92,6 +117,34 @@ class PageController extends Controller
         return Inertia::render('ArchiveView', [
             'journal' => $journal,
             'articles' => $articles,
+        ]);
+    }
+
+    public function search(Request $request)
+    {
+        $q = trim($request->get('q', ''));
+
+        $articles = collect();
+        $journals  = collect();
+
+        if ($q !== '') {
+            $articles = Article::where('name', 'like', "%{$q}%")
+                ->orWhere('author',      'like', "%{$q}%")
+                ->orWhere('keywords',    'like', "%{$q}%")
+                ->orWhere('annotations', 'like', "%{$q}%")
+                ->latest()->get();
+
+            $journals = JournalIssue::where('name', 'like', "%{$q}%")
+                ->latest()->get();
+        }
+
+        $latest_articles = Article::latest()->take(5)->get();
+
+        return Inertia::render('Search', [
+            'query'           => $q,
+            'articles'        => $articles,
+            'journals'        => $journals,
+            'latest_articles' => $latest_articles,
         ]);
     }
 }
