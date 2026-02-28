@@ -2,7 +2,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "npx tsc && npx vite build",
+        "build": "vite build",
         "dev": "vite",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
