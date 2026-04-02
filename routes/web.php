@@ -8,6 +8,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubmissionController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -52,6 +53,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('submissions/{submission}', [SubmissionController::class, 'show'])->name('submissions.admin.show');
         Route::put('submissions/{submission}', [SubmissionController::class, 'update'])->name('submissions.admin.update');
         Route::delete('submissions/{submission}', [SubmissionController::class, 'destroy'])->name('submissions.admin.destroy');
+
+        Route::get('users', [UserController::class, 'index'])->name('users.index');
+        Route::patch('users/{user}/toggle-admin', [UserController::class, 'toggleAdmin'])->name('users.toggleAdmin');
     });
 });
 

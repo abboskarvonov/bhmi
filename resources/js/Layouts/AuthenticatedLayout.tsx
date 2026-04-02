@@ -75,6 +75,14 @@ export default function Authenticated({
                                         >
                                             Arizalar
                                         </NavLink>
+                                        <NavLink
+                                            href={route("users.index")}
+                                            active={route().current(
+                                                "users.*",
+                                            )}
+                                        >
+                                            Foydalanuvchilar
+                                        </NavLink>
                                     </>
                                 )}
                             </div>
