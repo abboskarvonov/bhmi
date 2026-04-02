@@ -9,7 +9,7 @@ export default function Authenticated({
     header,
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
-    const user = usePage().props.auth.user;
+    const { user, isSuperAdmin } = usePage().props.auth;
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
@@ -75,14 +75,16 @@ export default function Authenticated({
                                         >
                                             Arizalar
                                         </NavLink>
-                                        <NavLink
-                                            href={route("users.index")}
-                                            active={route().current(
-                                                "users.*",
-                                            )}
-                                        >
-                                            Foydalanuvchilar
-                                        </NavLink>
+                                        {isSuperAdmin && (
+                                            <NavLink
+                                                href={route("users.index")}
+                                                active={route().current(
+                                                    "users.*",
+                                                )}
+                                            >
+                                                Foydalanuvchilar
+                                            </NavLink>
+                                        )}
                                     </>
                                 )}
                             </div>

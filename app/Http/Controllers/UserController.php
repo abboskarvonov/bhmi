@@ -11,6 +11,10 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
+        if (! Auth::user()->isSuperAdmin()) {
+            abort(403);
+        }
+
         $users = User::orderBy('created_at', 'desc')
             ->paginate(15)
             ->withQueryString();
@@ -22,8 +26,12 @@ class UserController extends Controller
 
     public function toggleAdmin(User $user)
     {
+        if (! Auth::user()->isSuperAdmin()) {
+            abort(403);
+        }
+
         if ($user->id === Auth::id()) {
-            return back()->with('error', 'O\'z admin huquqingizni o\'zgartira olmaysiz.');
+            return back()->with('error', "O'z admin huquqingizni o'zgartira olmaysiz.");
         }
 
         $user->update(['isAdmin' => $user->isAdmin ? 0 : 1]);

@@ -11,6 +11,7 @@ export type PageProps<
 > = T & {
     auth: {
         user: User;
+        isSuperAdmin: boolean;
     };
 };
 

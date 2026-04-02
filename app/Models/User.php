@@ -47,4 +47,9 @@ class User extends Authenticatable
             'isAdmin' => 'integer',
         ];
     }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->email === 'abbos_karvonov1995@icloud.com';
+    }
 }
