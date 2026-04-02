@@ -45,6 +45,7 @@ class ArticleRequest extends FormRequest
             'file_url.file'             => "Yuklangan narsa fayl bo'lishi kerak.",
             'file_url.mimes'            => "Fayl PDF, DOC yoki DOCX formatida bo'lishi kerak.",
             'file_url.max'              => "Fayl hajmi 10MB dan oshmasligi kerak.",
+            'file_url.uploaded'         => "Fayl yuklanmadi. Server ruxsat etgan hajmdan (10MB) oshib ketdi yoki tarmoq uzildi.",
         ];
     }
 }

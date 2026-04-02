@@ -32,9 +32,10 @@ class AboutRequest extends FormRequest
             'type.max'         => "Tur 255 belgidan oshmasligi kerak.",
             'content.required' => "Kontent maydoni to'ldirilishi shart.",
             'content.string'   => "Kontent matn ko'rinishida bo'lishi kerak.",
-            'file_url.file'    => "Yuklangan narsa fayl bo'lishi kerak.",
-            'file_url.mimes'   => "Fayl PDF, DOC, DOCX, JPG yoki PNG formatida bo'lishi kerak.",
-            'file_url.max'     => "Fayl hajmi 5MB dan oshmasligi kerak.",
+            'file_url.file'     => "Yuklangan narsa fayl bo'lishi kerak.",
+            'file_url.mimes'    => "Fayl PDF, DOC, DOCX, JPG yoki PNG formatida bo'lishi kerak.",
+            'file_url.max'      => "Fayl hajmi 5MB dan oshmasligi kerak.",
+            'file_url.uploaded' => "Fayl yuklanmadi. Server ruxsat etgan hajmdan (5MB) oshib ketdi yoki tarmoq uzildi.",
         ];
     }
 }
