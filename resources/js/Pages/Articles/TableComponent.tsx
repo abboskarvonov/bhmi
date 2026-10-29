@@ -21,6 +21,7 @@ import {
 
 function TableComponent({
     data,
+    offset,
     onDelete,
     sortField,
     sortDirection,
@@ -73,7 +74,7 @@ function TableComponent({
                 {data.length > 0 ? (
                     data.map((item, index) => (
                         <TableRow key={item.id}>
-                            <TableCell>{index + 1}</TableCell>
+                            <TableCell>{offset + index}</TableCell>
                             <TableCell>{item.name}</TableCell>
                             <TableCell>{item.journal?.name}</TableCell>
                             <TableCell>

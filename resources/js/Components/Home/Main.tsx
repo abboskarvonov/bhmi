@@ -1,3 +1,4 @@
+import SafeHtml from "@/Components/Custom/SafeHtml";
 import { About } from "@/types/about";
 import { Article } from "@/types/article";
 import { Journal } from "@/types/journal";
@@ -8,7 +9,7 @@ import { FiBookOpen, FiFileText } from "react-icons/fi";
 import Right from "./Right";
 
 interface Props {
-    about: About;
+    about: About | null;
     journals: Journal[];
     articles: Article[];
 }
@@ -136,12 +137,12 @@ function Main({ about, journals, articles }: Props) {
                             Jurnal haqida
                         </h2>
                     </div>
-                    <div
+                    <SafeHtml
                         className="prose prose-gray prose-headings:text-gray-900 prose-headings:font-semibold prose-p:text-gray-700
                             prose-strong:text-gray-900 prose-a:text-emerald-700
                             prose-a:no-underline hover:prose-a:underline
                             max-w-none leading-relaxed text-gray-700"
-                        dangerouslySetInnerHTML={{ __html: about.content }}
+                        html={about?.content}
                     />
                 </div>
 
@@ -150,10 +151,7 @@ function Main({ about, journals, articles }: Props) {
                     <SectionHeading title="Jurnal sonlari" href="/archive" />
                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                         {journals.map((journal) => (
-                            <JournalCard
-                                key={journal.id}
-                                journal={journal}
-                            />
+                            <JournalCard key={journal.id} journal={journal} />
                         ))}
                     </div>
                 </div>

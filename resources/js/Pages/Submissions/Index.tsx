@@ -120,7 +120,7 @@ function Index({ submissions }: Props) {
                                         {item.file_url && (
                                             <div className="mt-3">
                                                 <a
-                                                    href={`/storage/${item.file_url}`}
+                                                    href={route("submissions.download", item.id)}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-700 hover:text-emerald-900"

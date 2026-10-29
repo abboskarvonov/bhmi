@@ -1,3 +1,4 @@
+import { Paginated } from "./pagination";
 export interface Menu {
     id: number;
     name: string;
@@ -7,16 +8,8 @@ export interface Menu {
     _method?: string;
 }
 
-interface MenuPagination {
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-    data: Menu[];
-}
-
 export interface MenuIndexProps {
-    menus: MenuPagination;
+    menus: Paginated<Menu>;
 }
 
 export interface MenuCreateData {

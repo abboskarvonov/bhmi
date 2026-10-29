@@ -34,7 +34,7 @@ class UserController extends Controller
             return back()->with('error', "O'z admin huquqingizni o'zgartira olmaysiz.");
         }
 
-        $user->update(['isAdmin' => $user->isAdmin ? 0 : 1]);
+        $user->forceFill(['isAdmin' => $user->isAdmin ? 0 : 1])->save();
 
         return back()->with(
             'success',

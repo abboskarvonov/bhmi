@@ -21,7 +21,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'isAdmin',
     ];
 
     /**
@@ -50,6 +49,6 @@ class User extends Authenticatable
 
     public function isSuperAdmin(): bool
     {
-        return $this->email === 'abbos_karvonov1995@icloud.com';
+        return $this->email === config('app.super_admin_email');
     }
 }

@@ -16,6 +16,12 @@ return [
     'name' => env('APP_NAME', 'Laravel'),
 
     /*
+    | Foydalanuvchilarni boshqarish huquqiga ega yagona superadmin.
+    */
+
+    'super_admin_email' => env('SUPER_ADMIN_EMAIL', 'abbos_karvonov1995@icloud.com'),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------

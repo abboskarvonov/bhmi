@@ -7,9 +7,9 @@ import { Article } from "@/types/article";
 import { Journal } from "@/types/journal";
 
 interface Props {
-    about: About;
+    about: About | null;
     journals: Journal[];
-    latest_journal: Journal;
+    latest_journal: Journal | null;
     articles: Article[];
 }
 
@@ -21,7 +21,7 @@ export default function Welcome({
 }: Props) {
     const description = about?.content
         ? stripHtml(about.content, 160)
-        : "BHMI — Buxlateriya hisobi va moliyaviy iqtisod ilmiy jurnali. Ilmiy maqolalar va tadqiqotlarni o'qing.";
+        : "BHMI — Buxgalteriya hisobi va moliyaviy iqtisod ilmiy jurnali. Ilmiy maqolalar va tadqiqotlarni o'qing.";
 
     return (
         <MainLayout title="Bosh sahifa" description={description}>

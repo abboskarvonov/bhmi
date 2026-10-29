@@ -1,38 +1,27 @@
+import Pagination from "@/Components/Custom/Pagination";
 import Breadcrumb from "@/Components/Custom/Breadcrumb";
 import Right from "@/Components/Home/Right";
 import MainLayout from "@/Layouts/MainLayout";
 import { Article } from "@/types/article";
 import { Journal } from "@/types/journal";
+import { Paginated } from "@/types/pagination";
 import { Link } from "@inertiajs/react";
 import { format } from "date-fns";
-import {
-    FaAngleLeft,
-    FaAngleRight,
-    FaArrowRight,
-    FaCalendarDays,
-} from "react-icons/fa6";
+import { FaArrowRight, FaCalendarDays } from "react-icons/fa6";
 import { FiBookOpen } from "react-icons/fi";
 
-interface ArchivePagination {
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-    data: Journal[];
-}
-
 export interface ArchiveProps {
-    archives: ArchivePagination;
+    archives: Paginated<Journal>;
     articles: Article[];
 }
 
 function Archive({ archives, articles }: ArchiveProps) {
-    const { data, current_page, last_page, total } = archives;
+    const { data } = archives;
 
     return (
         <MainLayout
             title="Jurnal sonlari"
-            description="BHMI — Buxlateriya hisobi va moliyaviy iqtisod jurnalining barcha sonlari arxivi."
+            description="BHMI — Buxgalteriya hisobi va moliyaviy iqtisod jurnalining barcha sonlari arxivi."
         >
             <Breadcrumb title="Jurnal sonlari" />
 
@@ -96,57 +85,7 @@ function Archive({ archives, articles }: ArchiveProps) {
                     </div>
 
                     {/* Pagination */}
-                    {total > 10 && (
-                        <div className="mt-10 flex items-center justify-center gap-2">
-                            <Link
-                                href={current_page !== 1 ? `/archive?page=${current_page - 1}` : "#"}
-                                aria-label="Oldingi sahifa"
-                            >
-                                <button
-                                    disabled={current_page === 1}
-                                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition-all hover:border-emerald-300 hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
-                                >
-                                    <FaAngleLeft className="h-3.5 w-3.5" />
-                                </button>
-                            </Link>
-
-                            <div className="flex items-center gap-1.5">
-                                {[...Array(last_page)].map((_, index) => {
-                                    const page = index + 1;
-                                    return (
-                                        <Link
-                                            key={page}
-                                            href={`/archive?page=${page}`}
-                                            aria-label={`${page}-sahifa`}
-                                        >
-                                            <button
-                                                className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all ${
-                                                    page === current_page
-                                                        ? "bg-emerald-700 text-white shadow-sm"
-                                                        : "border border-gray-200 text-gray-600 hover:border-emerald-300 hover:text-emerald-700"
-                                                }`}
-                                                aria-current={page === current_page ? "page" : undefined}
-                                            >
-                                                {page}
-                                            </button>
-                                        </Link>
-                                    );
-                                })}
-                            </div>
-
-                            <Link
-                                href={current_page !== last_page ? `/archive?page=${current_page + 1}` : "#"}
-                                aria-label="Keyingi sahifa"
-                            >
-                                <button
-                                    disabled={current_page === last_page}
-                                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition-all hover:border-emerald-300 hover:text-emerald-700 disabled:cursor-not-allowed disabled:opacity-40"
-                                >
-                                    <FaAngleRight className="h-3.5 w-3.5" />
-                                </button>
-                            </Link>
-                        </div>
-                    )}
+                    <Pagination meta={archives} label="son" variant="public" />
                 </div>
 
                 <Right articles={articles} />

@@ -20,3 +20,7 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Production baza dump'lari (shaxsiy ma'lumotlar)
+*.sql
+*.sql.gz

@@ -13,6 +13,10 @@ export type PageProps<
         user: User;
         isSuperAdmin: boolean;
     };
+    flash?: {
+        success?: string | null;
+        error?: string | null;
+    };
 };
 
 export interface LayoutProps {

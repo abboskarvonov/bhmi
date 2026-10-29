@@ -122,20 +122,22 @@ class PageController extends Controller
 
     public function search(Request $request)
     {
-        $q = trim($request->get('q', ''));
+        $q = mb_substr(trim((string) $request->get('q', '')), 0, 100);
 
         $articles = collect();
         $journals  = collect();
 
         if ($q !== '') {
-            $articles = Article::where('name', 'like', "%{$q}%")
-                ->orWhere('author',      'like', "%{$q}%")
-                ->orWhere('keywords',    'like', "%{$q}%")
-                ->orWhere('annotations', 'like', "%{$q}%")
-                ->latest()->get();
+            $like = '%' . addcslashes($q, '%_\\') . '%';
 
-            $journals = JournalIssue::where('name', 'like', "%{$q}%")
-                ->latest()->get();
+            $articles = Article::where('name', 'like', $like)
+                ->orWhere('author',      'like', $like)
+                ->orWhere('keywords',    'like', $like)
+                ->orWhere('annotations', 'like', $like)
+                ->latest()->take(50)->get();
+
+            $journals = JournalIssue::where('name', 'like', $like)
+                ->latest()->take(20)->get();
         }
 
         $latest_articles = Article::latest()->take(5)->get();

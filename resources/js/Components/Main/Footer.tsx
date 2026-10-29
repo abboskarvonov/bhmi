@@ -80,7 +80,7 @@ function Footer() {
                             </div>
                         </div>
                         <p className="text-sm leading-relaxed text-emerald-200/80">
-                            Buxlateriya hisobi va moliyaviy iqtisod sohasidagi
+                            Buxgalteriya hisobi va moliyaviy iqtisod sohasidagi
                             ilmiy tadqiqotlarni chop etuvchi peer-reviewed
                             jurnal.
                         </p>
@@ -155,7 +155,7 @@ function Footer() {
                 <div className="mt-12 flex flex-col items-center gap-3 border-t border-emerald-700/50 pt-8">
                     <div className="h-px w-16 bg-gradient-to-r from-emerald-400 to-teal-300" />
                     <p className="text-center text-sm text-emerald-300/70">
-                        &copy; 2025 – {currentYear} Buxlateriya hisobi va
+                        &copy; 2025 – {currentYear} Buxgalteriya hisobi va
                         moliyaviy iqtisod jurnali. Barcha huquqlar himoyalangan.
                     </p>
                 </div>

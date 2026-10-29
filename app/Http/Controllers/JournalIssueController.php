@@ -13,11 +13,22 @@ class JournalIssueController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $journals = JournalIssue::paginate(10);
+        $search = mb_substr(trim((string) $request->query('search', '')), 0, 100);
+        $sort = in_array($request->query('sort'), ['name', 'created_at'], true) ? $request->query('sort') : null;
+        $direction = $request->query('direction') === 'desc' ? 'desc' : 'asc';
+
+        $journals = JournalIssue::query()
+            ->when($search !== '', fn ($q) => $q->where('name', 'like', '%' . addcslashes($search, '%_\\') . '%'))
+            ->when($sort, fn ($q) => $q->orderBy($sort, $direction), fn ($q) => $q->latest())
+            ->orderByDesc('id')
+            ->paginate(10)
+            ->withQueryString();
+
         return Inertia::render('JournalIssues/Index', [
-            'journals' => $journals
+            'journals' => $journals,
+            'filters' => ['search' => $search, 'sort' => $sort, 'direction' => $direction],
         ]);
     }
 
@@ -104,11 +115,15 @@ class JournalIssueController extends Controller
      */
     public function destroy(JournalIssue $journal_issue)
     {
-        if ($journal_issue->file_url && Storage::disk('public')->exists($journal_issue->file_url)) {
-            Storage::disk('public')->delete($journal_issue->file_url);
-        }
+        // Maqolalar DB'da cascade bilan o'chadi, fayllarini esa qo'lda tozalash kerak
+        $files = $journal_issue->articles()->whereNotNull('file_url')->pluck('file_url')
+            ->push($journal_issue->file_url)
+            ->filter()
+            ->all();
 
         $journal_issue->delete();
+
+        Storage::disk('public')->delete($files);
         return redirect()->route('journal-issues.index');
     }
 }

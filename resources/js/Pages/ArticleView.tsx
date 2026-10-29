@@ -1,3 +1,4 @@
+import SafeHtml from "@/Components/Custom/SafeHtml";
 import Right from "@/Components/Home/Right";
 import MainLayout from "@/Layouts/MainLayout";
 import { stripHtml } from "@/lib/utils";
@@ -124,12 +125,10 @@ function ArticleView({ article, articles, related_articles }: Props) {
                                     Kalit so'zlar
                                 </h2>
                             </div>
-                            <div
+                            <SafeHtml
                                 className="prose prose-sm prose-gray prose-p:text-gray-700 prose-strong:text-gray-900
                                     max-w-none text-gray-700"
-                                dangerouslySetInnerHTML={{
-                                    __html: article.keywords,
-                                }}
+                                html={article.keywords}
                             />
                         </div>
                     )}
@@ -143,13 +142,11 @@ function ArticleView({ article, articles, related_articles }: Props) {
                                     Annotatsiya
                                 </h2>
                             </div>
-                            <div
+                            <SafeHtml
                                 className="prose prose-gray prose-headings:text-gray-900 prose-headings:font-semibold prose-p:text-gray-700
                                     prose-strong:text-gray-900 max-w-none
                                     leading-relaxed text-gray-700"
-                                dangerouslySetInnerHTML={{
-                                    __html: article.annotations,
-                                }}
+                                html={article.annotations}
                             />
                         </div>
                     )}

@@ -22,7 +22,7 @@ const stats = [
     },
 ];
 
-function Hero({ latest_journal }: { latest_journal: Journal }) {
+function Hero({ latest_journal }: { latest_journal: Journal | null }) {
     return (
         <section
             className="relative overflow-hidden"
@@ -83,7 +83,7 @@ function Hero({ latest_journal }: { latest_journal: Journal }) {
                                 and Financial Economics
                             </h1>
                             <p className="max-w-md text-base text-white/80 lg:text-lg">
-                                Buxlateriya hisobi va moliyaviy iqtisod
+                                Buxgalteriya hisobi va moliyaviy iqtisod
                                 sohasidagi ilmiy tadqiqotlar va maqolalar
                                 nashri.
                             </p>

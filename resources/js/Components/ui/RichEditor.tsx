@@ -1,7 +1,5 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import UnderlineExt from "@tiptap/extension-underline";
-import LinkExt from "@tiptap/extension-link";
 import TextAlignExt from "@tiptap/extension-text-align";
 import PlaceholderExt from "@tiptap/extension-placeholder";
 import { TextStyle as TextStyleExt } from "@tiptap/extension-text-style";
@@ -98,14 +96,14 @@ export function RichEditor({
 
     const editor = useEditor({
         extensions: [
+            // Tiptap v3: Link va Underline StarterKit ichida
             StarterKit.configure({
                 heading: { levels: [2, 3] },
-            }),
-            UnderlineExt,
-            LinkExt.configure({
-                openOnClick: false,
-                HTMLAttributes: {
-                    class: "text-blue-600 underline cursor-pointer",
+                link: {
+                    openOnClick: false,
+                    HTMLAttributes: {
+                        class: "text-blue-600 underline cursor-pointer",
+                    },
                 },
             }),
             TextAlignExt.configure({

@@ -32,13 +32,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/submit-article', [ArticleSubmissionController::class, 'create'])->name('submissions.create');
-    Route::post('/submit-article', [ArticleSubmissionController::class, 'store'])->name('submissions.store');
+    Route::post('/submit-article', [ArticleSubmissionController::class, 'store'])
+        ->middleware('throttle:5,10')
+        ->name('submissions.store');
     Route::get('/my-submissions', [ArticleSubmissionController::class, 'index'])->name('submissions.index');
+    Route::get('/submissions/{submission}/download', [ArticleSubmissionController::class, 'download'])->name('submissions.download');
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::prefix('dashboard')->group(function () {
-        Route::resource('menus', MenuController::class);
+        Route::resource('menus', MenuController::class)->except('show');
 
         Route::resource('abouts', AboutController::class);
         Route::put('/abouts/remove-file/{about}', [AboutController::class, 'removeFile'])->name('abouts.removeFile');

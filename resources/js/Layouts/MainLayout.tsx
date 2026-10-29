@@ -4,9 +4,9 @@ import { LayoutProps } from "@/types";
 import { Head } from "@inertiajs/react";
 import React from "react";
 
-const SITE_NAME = "Buxlateriya hisobi va moliyaviy iqtisod jurnali";
+const SITE_NAME = "Buxgalteriya hisobi va moliyaviy iqtisod jurnali";
 const DEFAULT_DESCRIPTION =
-    "BHMI — Buxlateriya hisobi va moliyaviy iqtisod ilmiy jurnali. Ilmiy maqolalar, tadqiqotlar va jurnal sonlarini o'qing.";
+    "BHMI — Buxgalteriya hisobi va moliyaviy iqtisod ilmiy jurnali. Ilmiy maqolalar, tadqiqotlar va jurnal sonlarini o'qing.";
 const DEFAULT_OG_IMAGE = "/img/logo.webp";
 
 function MainLayout({ children, title, description, ogImage }: LayoutProps) {

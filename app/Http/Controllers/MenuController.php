@@ -41,16 +41,6 @@ class MenuController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(Menu $menu)
-    {
-        return Inertia::render('Menus/View', [
-            'menu' => $menu,
-        ]);
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(Menu $menu)

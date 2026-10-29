@@ -1,5 +1,5 @@
 import { useDeleteItem } from "@/hooks/useDeleteItem";
-import { useTable } from "@/hooks/useTable";
+import { useServerTable } from "@/hooks/useServerTable";
 import { Journal, JournalIndexProps } from "@/types/journal";
 import clsx from "clsx";
 import { useState } from "react";
@@ -8,11 +8,11 @@ import { Head, Link } from "@inertiajs/react";
 import SearchControls from "@/Components/Custom/SearchControls";
 import { Button } from "@/Components/ui/button";
 import DeleteModal from "@/Components/Custom/DeleteModal";
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
+import Pagination from "@/Components/Custom/Pagination";
 import TableComponent from "./TableComponent";
 
-function Index({ journals }: JournalIndexProps) {
-    const { data, current_page, last_page } = journals;
+function Index({ journals, filters }: JournalIndexProps) {
+    const { data, from } = journals;
 
     const { deleteItem } = useDeleteItem<Journal>(
         "journal-issues.destroy",
@@ -23,13 +23,12 @@ function Index({ journals }: JournalIndexProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const {
-        sortedData,
         searchTerm,
         setSearchTerm,
         sortField,
         sortDirection,
         handleSort,
-    } = useTable<Journal>(data, ["name"]);
+    } = useServerTable<Journal>("journal-issues.index", filters);
 
     const handleDeleteClick = (journal: Journal) => {
         setSelectedItem(journal);
@@ -74,7 +73,8 @@ function Index({ journals }: JournalIndexProps) {
                         {/* Table Component */}
                         <div className="mt-10">
                             <TableComponent
-                                data={sortedData}
+                                data={data}
+                                offset={from ?? 1}
                                 onDelete={handleDeleteClick}
                                 sortField={sortField}
                                 sortDirection={sortDirection}
@@ -93,74 +93,7 @@ function Index({ journals }: JournalIndexProps) {
                         )}
 
                         {/* Pagination */}
-                        <div className="mt-10 flex items-center justify-center gap-2">
-                            <Link
-                                href={
-                                    current_page !== 1
-                                        ? `/dashboard/journal-issues?page=${
-                                              current_page - 1
-                                          }`
-                                        : "#"
-                                }
-                            >
-                                <Button
-                                    variant={"outline"}
-                                    size={"icon"}
-                                    className={`${
-                                        current_page === 1
-                                            ? "cursor-not-allowed opacity-50"
-                                            : ""
-                                    } `}
-                                >
-                                    <FaAngleLeft />
-                                </Button>
-                            </Link>
-
-                            <div className="flex items-center space-x-2">
-                                {[...Array(last_page)].map((_, index) => {
-                                    const page = index + 1;
-                                    return (
-                                        <Link
-                                            key={page}
-                                            href={`/dashboard/journal-issues?page=${page}`}
-                                        >
-                                            <Button
-                                                variant={
-                                                    page === current_page
-                                                        ? "default"
-                                                        : "outline"
-                                                }
-                                                size={"icon"}
-                                            >
-                                                {page}
-                                            </Button>
-                                        </Link>
-                                    );
-                                })}
-                            </div>
-
-                            <Link
-                                href={
-                                    current_page !== last_page
-                                        ? `/dashboard/journal-issues?page=${
-                                              current_page + 1
-                                          }`
-                                        : "#"
-                                }
-                            >
-                                <Button
-                                    variant={"outline"}
-                                    size={"icon"}
-                                    className={`${
-                                        current_page === last_page
-                                            ? "cursor-not-allowed opacity-50"
-                                            : ""
-                                    } `}
-                                >
-                                    <FaAngleRight />
-                                </Button>
-                            </Link>
-                        </div>
+                        <Pagination meta={journals} label="jurnal" />
                     </div>
                 </div>
             </div>

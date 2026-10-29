@@ -1,5 +1,5 @@
 import { useDeleteItem } from "@/hooks/useDeleteItem";
-import { useTable } from "@/hooks/useTable";
+import { useServerTable } from "@/hooks/useServerTable";
 import { Article, ArticleIndexProps } from "@/types/article";
 import { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
@@ -7,12 +7,12 @@ import clsx from "clsx";
 import { Head, Link } from "@inertiajs/react";
 import SearchControls from "@/Components/Custom/SearchControls";
 import { Button } from "@/Components/ui/button";
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
+import Pagination from "@/Components/Custom/Pagination";
 import DeleteModal from "@/Components/Custom/DeleteModal";
 import TableComponent from "./TableComponent";
 
-function Index({ articles }: ArticleIndexProps) {
-    const { data, current_page, last_page } = articles;
+function Index({ articles, filters }: ArticleIndexProps) {
+    const { data, from } = articles;
 
     const { deleteItem } = useDeleteItem<Article>("articles.destroy", "id");
 
@@ -20,13 +20,12 @@ function Index({ articles }: ArticleIndexProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const {
-        sortedData,
         searchTerm,
         setSearchTerm,
         sortField,
         sortDirection,
         handleSort,
-    } = useTable<Article>(data, ["name"]);
+    } = useServerTable<Article>("articles.index", filters);
 
     const handleDeleteClick = (article: Article) => {
         setSelectedItem(article);
@@ -70,7 +69,8 @@ function Index({ articles }: ArticleIndexProps) {
                         {/* Table Component */}
                         <div className="mt-10">
                             <TableComponent
-                                data={sortedData}
+                                data={data}
+                                offset={from ?? 1}
                                 onDelete={handleDeleteClick}
                                 sortField={sortField}
                                 sortDirection={sortDirection}
@@ -89,74 +89,7 @@ function Index({ articles }: ArticleIndexProps) {
                         )}
 
                         {/* Pagination */}
-                        <div className="mt-10 flex items-center justify-center gap-2">
-                            <Link
-                                href={
-                                    current_page !== 1
-                                        ? `/dashboard/articles?page=${
-                                              current_page - 1
-                                          }`
-                                        : "#"
-                                }
-                            >
-                                <Button
-                                    variant={"outline"}
-                                    size={"icon"}
-                                    className={`${
-                                        current_page === 1
-                                            ? "cursor-not-allowed opacity-50"
-                                            : ""
-                                    } `}
-                                >
-                                    <FaAngleLeft />
-                                </Button>
-                            </Link>
-
-                            <div className="flex items-center space-x-2">
-                                {[...Array(last_page)].map((_, index) => {
-                                    const page = index + 1;
-                                    return (
-                                        <Link
-                                            key={page}
-                                            href={`/dashboard/articles?page=${page}`}
-                                        >
-                                            <Button
-                                                variant={
-                                                    page === current_page
-                                                        ? "default"
-                                                        : "outline"
-                                                }
-                                                size={"icon"}
-                                            >
-                                                {page}
-                                            </Button>
-                                        </Link>
-                                    );
-                                })}
-                            </div>
-
-                            <Link
-                                href={
-                                    current_page !== last_page
-                                        ? `/dashboard/articles?page=${
-                                              current_page + 1
-                                          }`
-                                        : "#"
-                                }
-                            >
-                                <Button
-                                    variant={"outline"}
-                                    size={"icon"}
-                                    className={`${
-                                        current_page === last_page
-                                            ? "cursor-not-allowed opacity-50"
-                                            : ""
-                                    } `}
-                                >
-                                    <FaAngleRight />
-                                </Button>
-                            </Link>
-                        </div>
+                        <Pagination meta={articles} label="maqola" />
                     </div>
                 </div>
             </div>

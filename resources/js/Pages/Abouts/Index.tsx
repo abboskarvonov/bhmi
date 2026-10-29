@@ -8,11 +8,11 @@ import { About, AboutIndexProps } from "@/types/about";
 import { Head, Link } from "@inertiajs/react";
 import clsx from "clsx";
 import { useState } from "react";
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
+import Pagination from "@/Components/Custom/Pagination";
 import TableComponent from "./TableComponent";
 
 function Index({ abouts }: AboutIndexProps) {
-    const { data, current_page, last_page } = abouts;
+    const { data } = abouts;
 
     const { deleteItem } = useDeleteItem<About>("abouts.destroy", "id");
 
@@ -90,74 +90,7 @@ function Index({ abouts }: AboutIndexProps) {
                         )}
 
                         {/* Pagination */}
-                        <div className="mt-10 flex items-center justify-center gap-2">
-                            <Link
-                                href={
-                                    current_page !== 1
-                                        ? `/dashboard/abouts?page=${
-                                              current_page - 1
-                                          }`
-                                        : "#"
-                                }
-                            >
-                                <Button
-                                    variant={"outline"}
-                                    size={"icon"}
-                                    className={`${
-                                        current_page === 1
-                                            ? "cursor-not-allowed opacity-50"
-                                            : ""
-                                    } `}
-                                >
-                                    <FaAngleLeft />
-                                </Button>
-                            </Link>
-
-                            <div className="flex items-center space-x-2">
-                                {[...Array(last_page)].map((_, index) => {
-                                    const page = index + 1;
-                                    return (
-                                        <Link
-                                            key={page}
-                                            href={`/dashboard/abouts?page=${page}`}
-                                        >
-                                            <Button
-                                                variant={
-                                                    page === current_page
-                                                        ? "default"
-                                                        : "outline"
-                                                }
-                                                size={"icon"}
-                                            >
-                                                {page}
-                                            </Button>
-                                        </Link>
-                                    );
-                                })}
-                            </div>
-
-                            <Link
-                                href={
-                                    current_page !== last_page
-                                        ? `/dashboard/abouts?page=${
-                                              current_page + 1
-                                          }`
-                                        : "#"
-                                }
-                            >
-                                <Button
-                                    variant={"outline"}
-                                    size={"icon"}
-                                    className={`${
-                                        current_page === last_page
-                                            ? "cursor-not-allowed opacity-50"
-                                            : ""
-                                    } `}
-                                >
-                                    <FaAngleRight />
-                                </Button>
-                            </Link>
-                        </div>
+                        <Pagination meta={abouts} label="ta" />
                     </div>
                 </div>
             </div>

@@ -101,7 +101,7 @@ function Show({ submission }: Props) {
 
                                 {submission.file_url && (
                                     <a
-                                        href={`/storage/${submission.file_url}`}
+                                        href={route("submissions.download", submission.id)}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-medium text-emerald-700 transition-colors hover:bg-emerald-100"

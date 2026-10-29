@@ -1,3 +1,4 @@
+import { Paginated } from "./pagination";
 export interface About {
     id: number;
     name: string;
@@ -9,16 +10,8 @@ export interface About {
     _method?: string;
 }
 
-interface AboutPagination {
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-    data: About[];
-}
-
 export interface AboutIndexProps {
-    abouts: AboutPagination;
+    abouts: Paginated<About>;
 }
 
 export interface AboutCreateData {

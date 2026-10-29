@@ -72,7 +72,7 @@ export default function Register() {
                 </div>
 
                 <p className="relative text-xs text-emerald-300/60">
-                    © {new Date().getFullYear()} BHMI — Buxlateriya hisobi va moliyaviy iqtisod jurnali
+                    © {new Date().getFullYear()} BHMI — Buxgalteriya hisobi va moliyaviy iqtisod jurnali
                 </p>
             </div>
 

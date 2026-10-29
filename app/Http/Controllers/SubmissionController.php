@@ -11,9 +11,11 @@ class SubmissionController extends Controller
 {
     public function index()
     {
-        $submissions = ArticleSubmission::with('user')
+        $submissions = ArticleSubmission::with('user:id,name,email')
             ->latest()
-            ->get();
+            ->orderByDesc('id')
+            ->paginate(15)
+            ->withQueryString();
 
         return Inertia::render('Dashboard/Submissions/Index', [
             'submissions' => $submissions,
@@ -46,7 +48,8 @@ class SubmissionController extends Controller
 
     public function destroy(ArticleSubmission $submission)
     {
-        if ($submission->file_url && Storage::disk('public')->exists($submission->file_url)) {
+        if ($submission->file_url) {
+            Storage::disk('local')->delete($submission->file_url);
             Storage::disk('public')->delete($submission->file_url);
         }
 

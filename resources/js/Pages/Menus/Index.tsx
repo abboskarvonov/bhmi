@@ -8,12 +8,12 @@ import { Menu, MenuIndexProps } from "@/types/menu";
 import { Head, Link } from "@inertiajs/react";
 import clsx from "clsx";
 import { useState } from "react";
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
+import Pagination from "@/Components/Custom/Pagination";
 import TableComponent from "./TableComponent";
 import ViewModal from "@/Components/Custom/ViewModal";
 
 function Index({ menus }: MenuIndexProps) {
-    const { data, current_page, last_page } = menus;
+    const { data } = menus;
 
     const { deleteItem } = useDeleteItem<Menu>("menus.destroy", "id");
 
@@ -108,74 +108,7 @@ function Index({ menus }: MenuIndexProps) {
                         )}
 
                         {/* Pagination */}
-                        <div className="mt-10 flex items-center justify-center gap-2">
-                            <Link
-                                href={
-                                    current_page !== 1
-                                        ? `/dashboard/menus?page=${
-                                              current_page - 1
-                                          }`
-                                        : "#"
-                                }
-                            >
-                                <Button
-                                    variant={"outline"}
-                                    size={"icon"}
-                                    className={`${
-                                        current_page === 1
-                                            ? "cursor-not-allowed opacity-50"
-                                            : ""
-                                    } `}
-                                >
-                                    <FaAngleLeft />
-                                </Button>
-                            </Link>
-
-                            <div className="flex items-center space-x-2">
-                                {[...Array(last_page)].map((_, index) => {
-                                    const page = index + 1;
-                                    return (
-                                        <Link
-                                            key={page}
-                                            href={`/dashboard/menus?page=${page}`}
-                                        >
-                                            <Button
-                                                variant={
-                                                    page === current_page
-                                                        ? "default"
-                                                        : "outline"
-                                                }
-                                                size={"icon"}
-                                            >
-                                                {page}
-                                            </Button>
-                                        </Link>
-                                    );
-                                })}
-                            </div>
-
-                            <Link
-                                href={
-                                    current_page !== last_page
-                                        ? `/dashboard/menus?page=${
-                                              current_page + 1
-                                          }`
-                                        : "#"
-                                }
-                            >
-                                <Button
-                                    variant={"outline"}
-                                    size={"icon"}
-                                    className={`${
-                                        current_page === last_page
-                                            ? "cursor-not-allowed opacity-50"
-                                            : ""
-                                    } `}
-                                >
-                                    <FaAngleRight />
-                                </Button>
-                            </Link>
-                        </div>
+                        <Pagination meta={menus} label="menyu" />
                     </div>
                 </div>
             </div>

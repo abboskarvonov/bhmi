@@ -14,11 +14,25 @@ class ArticleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $articles = Article::with('journal')->paginate(10);
+        $search = mb_substr(trim((string) $request->query('search', '')), 0, 100);
+        $sort = in_array($request->query('sort'), ['name', 'created_at'], true) ? $request->query('sort') : null;
+        $direction = $request->query('direction') === 'desc' ? 'desc' : 'asc';
+
+        $articles = Article::with('journal:id,name')
+            ->when($search !== '', function ($query) use ($search) {
+                $like = '%' . addcslashes($search, '%_\\') . '%';
+                $query->where(fn ($q) => $q->where('name', 'like', $like)->orWhere('author', 'like', $like));
+            })
+            ->when($sort, fn ($q) => $q->orderBy($sort, $direction), fn ($q) => $q->latest())
+            ->orderByDesc('id')
+            ->paginate(10)
+            ->withQueryString();
+
         return Inertia::render('Articles/Index', [
-            'articles' => $articles
+            'articles' => $articles,
+            'filters' => ['search' => $search, 'sort' => $sort, 'direction' => $direction],
         ]);
     }
 

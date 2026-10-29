@@ -1,3 +1,4 @@
+import { Paginated, TableFilters } from "./pagination";
 import { Journal } from "./journal";
 
 export interface Article {
@@ -17,16 +18,9 @@ export interface Article {
     _method?: string;
 }
 
-interface ArticlePagination {
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-    data: Article[];
-}
-
 export interface ArticleIndexProps {
-    articles: ArticlePagination;
+    articles: Paginated<Article>;
+    filters: TableFilters;
 }
 
 export interface ArticleCreateData {
@@ -56,6 +50,7 @@ export interface ArticleEditData {
 
 export interface TableComponentProps {
     data: Article[];
+    offset: number;
     onDelete: (articles: Article) => void;
     sortField: keyof Article | null;
     sortDirection: "asc" | "desc";

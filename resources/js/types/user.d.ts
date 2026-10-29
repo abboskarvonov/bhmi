@@ -1,3 +1,5 @@
+import { Paginated } from "./pagination";
+
 export interface UserItem {
     id: number;
     name: string;
@@ -8,16 +10,8 @@ export interface UserItem {
     updated_at: string;
 }
 
-export interface UserPagination {
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-    data: UserItem[];
-}
-
 export interface UserIndexProps {
-    users: UserPagination;
+    users: Paginated<UserItem>;
 }
 
 export interface UserTableComponentProps {
