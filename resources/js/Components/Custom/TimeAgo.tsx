@@ -1,4 +1,4 @@
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { uz } from "date-fns/locale";
 
 interface Props {
@@ -6,7 +6,7 @@ interface Props {
     updatedAt?: string;
 }
 
-// "2 kun oldin" ko'rinishida; to'liq sana sichqoncha ustiga kelganda ko'rinadi
+// Aniq sana va vaqt: "29.10.2026, 14:41"; "2 kun oldin" sichqoncha ustiga kelganda ko'rinadi
 function TimeAgo({ createdAt, updatedAt }: Props) {
     const value = createdAt ?? updatedAt;
     if (!value) return null;
@@ -14,8 +14,12 @@ function TimeAgo({ createdAt, updatedAt }: Props) {
     const date = new Date(value);
 
     return (
-        <time dateTime={value} title={date.toLocaleString("uz-UZ")}>
-            {formatDistanceToNow(date, { addSuffix: true, locale: uz })}
+        <time
+            dateTime={value}
+            title={formatDistanceToNow(date, { addSuffix: true, locale: uz })}
+            className="whitespace-nowrap tabular-nums"
+        >
+            {format(date, "dd.MM.yyyy, HH:mm")}
         </time>
     );
 }
