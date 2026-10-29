@@ -62,6 +62,10 @@ class JournalIssueController extends Controller
      */
     public function show(JournalIssue $journal_issue)
     {
+        $journal_issue->load(['articles' => fn ($q) => $q
+            ->select('id', 'name', 'author', 'pages', 'journal_issue_id')
+            ->orderBy('id')]);
+
         return Inertia::render('JournalIssues/View', [
             'journal_issue' => $journal_issue,
         ]);

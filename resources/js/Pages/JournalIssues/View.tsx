@@ -1,100 +1,147 @@
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
-import { Button } from "@/Components/ui/button";
-import { FaPen } from "react-icons/fa6";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Components/ui/table";
+    DetailItem,
+    DetailList,
+    EditButton,
+    FileCard,
+    SiteLinkButton,
+} from "@/Components/Custom/Detail";
+import { FormHeader, FormSection } from "@/Components/Custom/Form";
 import TimeAgo from "@/Components/Custom/TimeAgo";
+import { Button } from "@/Components/ui/button";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Journal } from "@/types/journal";
+import { Head, Link } from "@inertiajs/react";
 import { format } from "date-fns";
+import { FiChevronRight, FiFileText, FiPlus } from "react-icons/fi";
 
 function View({ journal_issue }: { journal_issue: Journal }) {
+    const articles = journal_issue.articles ?? [];
+    const filePath =
+        typeof journal_issue.file_url === "string"
+            ? journal_issue.file_url
+            : null;
+
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    Jurnal ko'rinishi - {journal_issue.name}
-                </h2>
-            }
-        >
+        <AuthenticatedLayout header={<h2>Jurnallar</h2>}>
             <Head title={`Jurnal - ${journal_issue.name}`} />
-            <div>
-                <div className="w-full">
-                    <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm sm:p-6">
-                        <div className="mb-6">
-                            <Link
-                                href={route("journal-issues.edit", {
-                                    id: journal_issue.id,
-                                })}
+
+            <div className="space-y-6">
+                <FormHeader
+                    title={journal_issue.name}
+                    description={`${articles.length} ta maqola`}
+                    backHref={route("journal-issues.index")}
+                    actions={
+                        <>
+                            {journal_issue.slug && (
+                                <SiteLinkButton
+                                    href={`/archive/${journal_issue.slug}`}
+                                />
+                            )}
+                            <EditButton
+                                href={route(
+                                    "journal-issues.edit",
+                                    journal_issue.id,
+                                )}
+                            />
+                        </>
+                    }
+                />
+
+                <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+                    <section className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm xl:col-span-2">
+                        <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-5 py-4 sm:px-6">
+                            <h2 className="font-semibold text-gray-900">
+                                Shu sondagi maqolalar
+                            </h2>
+                            <Button
+                                asChild
+                                size="sm"
+                                variant="outline"
+                                className="rounded-lg"
                             >
-                                <Button variant={"default"} size={"icon"}>
-                                    <FaPen />
-                                </Button>
-                            </Link>
+                                <Link href={route("articles.create")}>
+                                    <FiPlus className="h-4 w-4" />
+                                    Maqola qo'shish
+                                </Link>
+                            </Button>
                         </div>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Sarlovha</TableHead>
-                                    <TableHead>Ma'lumotlar</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell>ID:</TableCell>
-                                    <TableCell>{journal_issue.id}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Name:</TableCell>
-                                    <TableCell>{journal_issue.name}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Date:</TableCell>
-                                    <TableCell>
-                                        {format(
-                                            journal_issue.date,
-                                            "MM-dd-yyyy",
+
+                        {articles.length === 0 ? (
+                            <p className="px-6 py-12 text-center text-sm text-gray-400">
+                                Bu songa hali maqola qo'shilmagan
+                            </p>
+                        ) : (
+                            <ul className="divide-y divide-gray-100">
+                                {articles.map((article, index) => (
+                                    <li key={article.id}>
+                                        <Link
+                                            href={route(
+                                                "articles.show",
+                                                article.id,
+                                            )}
+                                            className="group flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-gray-50 sm:px-6"
+                                        >
+                                            <span className="w-6 shrink-0 text-right text-sm tabular-nums text-gray-400">
+                                                {index + 1}
+                                            </span>
+                                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600">
+                                                <FiFileText className="h-4 w-4" />
+                                            </span>
+                                            <div className="min-w-0 flex-1">
+                                                <p className="truncate text-sm font-medium text-gray-900">
+                                                    {article.name}
+                                                </p>
+                                                <p className="mt-0.5 truncate text-xs text-gray-500">
+                                                    {article.author}
+                                                    {article.pages &&
+                                                        ` · ${article.pages}-betlar`}
+                                                </p>
+                                            </div>
+                                            <FiChevronRight className="h-4 w-4 shrink-0 text-gray-300 group-hover:text-gray-500" />
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </section>
+
+                    <div className="space-y-6">
+                        <FormSection title="Ma'lumotlar">
+                            <DetailList>
+                                <DetailItem label="Chiqish sanasi">
+                                    {journal_issue.date &&
+                                        format(
+                                            new Date(journal_issue.date),
+                                            "dd.MM.yyyy",
                                         )}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Slug:</TableCell>
-                                    <TableCell>{journal_issue.slug}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Fayl:</TableCell>
-                                    <TableCell>
-                                        {journal_issue.file_url ? (
-                                            <span>Fayl mavjud</span>
-                                        ) : (
-                                            <span>Fayl mavjud emas</span>
-                                        )}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Created:</TableCell>
-                                    <TableCell>
-                                        <TimeAgo
-                                            createdAt={journal_issue.created_at}
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Updated:</TableCell>
-                                    <TableCell>
-                                        <TimeAgo
-                                            updatedAt={journal_issue.updated_at}
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
+                                </DetailItem>
+                                <DetailItem label="Maqolalar">
+                                    {articles.length} ta
+                                </DetailItem>
+                                <DetailItem
+                                    label="Slug"
+                                    className="font-mono text-xs font-normal text-gray-600"
+                                >
+                                    {journal_issue.slug}
+                                </DetailItem>
+                                <DetailItem label="Qo'shilgan">
+                                    <TimeAgo
+                                        createdAt={journal_issue.created_at}
+                                    />
+                                </DetailItem>
+                                <DetailItem label="Yangilangan">
+                                    <TimeAgo
+                                        updatedAt={journal_issue.updated_at}
+                                    />
+                                </DetailItem>
+                            </DetailList>
+                        </FormSection>
+
+                        <FormSection title="Jurnal fayli">
+                            <FileCard
+                                href={filePath ? `/storage/${filePath}` : null}
+                            />
+                        </FormSection>
                     </div>
                 </div>
             </div>

@@ -48,30 +48,39 @@ export function FormHeader({
     title,
     description,
     backHref,
+    actions,
 }: {
     title: string;
-    description?: string;
+    description?: ReactNode;
     backHref: string;
+    actions?: ReactNode;
 }) {
     return (
-        <div className="flex items-start gap-3">
-            <Link
-                href={backHref}
-                aria-label="Ortga"
-                className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 shadow-sm transition-colors hover:border-emerald-300 hover:text-emerald-700"
-            >
-                <FiArrowLeft className="h-4 w-4" />
-            </Link>
-            <div className="min-w-0">
-                <h1 className="truncate text-xl font-bold text-gray-900">
-                    {title}
-                </h1>
-                {description && (
-                    <p className="mt-0.5 text-sm text-gray-500">
-                        {description}
-                    </p>
-                )}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+            <div className="flex min-w-0 flex-1 items-start gap-3">
+                <Link
+                    href={backHref}
+                    aria-label="Ortga"
+                    className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 shadow-sm transition-colors hover:border-emerald-300 hover:text-emerald-700"
+                >
+                    <FiArrowLeft className="h-4 w-4" />
+                </Link>
+                <div className="min-w-0">
+                    <h1 className="line-clamp-2 text-xl font-bold text-gray-900">
+                        {title}
+                    </h1>
+                    {description && (
+                        <div className="mt-0.5 text-sm text-gray-500">
+                            {description}
+                        </div>
+                    )}
+                </div>
             </div>
+            {actions && (
+                <div className="flex shrink-0 flex-wrap items-center gap-2 pl-12 sm:pl-0">
+                    {actions}
+                </div>
+            )}
         </div>
     );
 }

@@ -1,119 +1,110 @@
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link } from "@inertiajs/react";
-import { Button } from "@/Components/ui/button";
-import { FaPen } from "react-icons/fa6";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Components/ui/table";
+    DetailItem,
+    DetailList,
+    EditButton,
+    FileCard,
+    SiteLinkButton,
+} from "@/Components/Custom/Detail";
+import { FormHeader, FormSection } from "@/Components/Custom/Form";
+import SafeHtml from "@/Components/Custom/SafeHtml";
 import TimeAgo from "@/Components/Custom/TimeAgo";
-import { format } from "date-fns";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Article } from "@/types/article";
+import { Head, Link } from "@inertiajs/react";
+import { format } from "date-fns";
 
 function View({ article }: { article: Article }) {
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    Maqola ko'rinishi - {article.name}
-                </h2>
-            }
-        >
+        <AuthenticatedLayout header={<h2>Maqolalar</h2>}>
             <Head title={`Maqola - ${article.name}`} />
-            <div>
-                <div className="w-full">
-                    <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm sm:p-6">
-                        <div className="mb-6">
-                            <Link
-                                href={route("articles.edit", {
-                                    id: article.id,
-                                })}
-                            >
-                                <Button variant={"default"} size={"icon"}>
-                                    <FaPen />
-                                </Button>
-                            </Link>
-                        </div>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Sarlovha</TableHead>
-                                    <TableHead>Ma'lumotlar</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell>ID:</TableCell>
-                                    <TableCell>{article.id}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Maqola nomi:</TableCell>
-                                    <TableCell>{article.name}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Mualliflar:</TableCell>
-                                    <TableCell>{article.author}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Sahifalari:</TableCell>
-                                    <TableCell>{article.pages}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Sanasi:</TableCell>
-                                    <TableCell>
-                                        {format(article.date, "MM-dd-yyyy")}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Jurnal:</TableCell>
-                                    <TableCell>
-                                        {article.journal?.name}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Kalit so'zlar:</TableCell>
-                                    <TableCell>{article.keywords}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Annotatsiya:</TableCell>
-                                    <TableCell>{article.annotations}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Slug:</TableCell>
-                                    <TableCell>{article.slug}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Fayl:</TableCell>
-                                    <TableCell>
-                                        {article.file_url ? (
-                                            <span>Fayl mavjud</span>
-                                        ) : (
-                                            <span>Fayl mavjud emas</span>
+
+            <div className="space-y-6">
+                <FormHeader
+                    title={article.name}
+                    description={article.author}
+                    backHref={route("articles.index")}
+                    actions={
+                        <>
+                            {article.slug && (
+                                <SiteLinkButton
+                                    href={`/article/${article.slug}`}
+                                />
+                            )}
+                            <EditButton
+                                href={route("articles.edit", article.id)}
+                            />
+                        </>
+                    }
+                />
+
+                <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+                    <div className="space-y-6 xl:col-span-2">
+                        <FormSection title="Kalit so'zlar">
+                            <SafeHtml
+                                html={article.keywords}
+                                className="rich-content text-sm text-gray-700"
+                                fallback="Kalit so'zlar kiritilmagan."
+                            />
+                        </FormSection>
+                        <FormSection title="Annotatsiya">
+                            <SafeHtml
+                                html={article.annotations}
+                                className="rich-content text-sm text-gray-700"
+                                fallback="Annotatsiya kiritilmagan."
+                            />
+                        </FormSection>
+                    </div>
+
+                    <div className="space-y-6">
+                        <FormSection title="Ma'lumotlar">
+                            <DetailList>
+                                <DetailItem label="Jurnal soni">
+                                    {article.journal && (
+                                        <Link
+                                            href={route(
+                                                "journal-issues.show",
+                                                article.journal.id,
+                                            )}
+                                            className="text-emerald-700 hover:underline"
+                                        >
+                                            {article.journal.name}
+                                        </Link>
+                                    )}
+                                </DetailItem>
+                                <DetailItem label="Sahifalar">
+                                    {article.pages}
+                                </DetailItem>
+                                <DetailItem label="Nashr sanasi">
+                                    {article.date &&
+                                        format(
+                                            new Date(article.date),
+                                            "dd.MM.yyyy",
                                         )}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Created:</TableCell>
-                                    <TableCell>
-                                        <TimeAgo
-                                            createdAt={article.created_at}
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell>Updated:</TableCell>
-                                    <TableCell>
-                                        <TimeAgo
-                                            updatedAt={article.updated_at}
-                                        />
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
+                                </DetailItem>
+                                <DetailItem
+                                    label="Slug"
+                                    className="font-mono text-xs font-normal text-gray-600"
+                                >
+                                    {article.slug}
+                                </DetailItem>
+                                <DetailItem label="Qo'shilgan">
+                                    <TimeAgo createdAt={article.created_at} />
+                                </DetailItem>
+                                <DetailItem label="Yangilangan">
+                                    <TimeAgo updatedAt={article.updated_at} />
+                                </DetailItem>
+                            </DetailList>
+                        </FormSection>
+
+                        <FormSection title="Maqola fayli">
+                            <FileCard
+                                href={
+                                    article.file_url
+                                        ? `/storage/${article.file_url}`
+                                        : null
+                                }
+                            />
+                        </FormSection>
                     </div>
                 </div>
             </div>
