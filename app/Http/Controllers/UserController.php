@@ -16,7 +16,7 @@ class UserController extends Controller
         }
 
         $users = User::orderBy('created_at', 'desc')
-            ->paginate(15)
+            ->paginate(20)
             ->withQueryString();
 
         return Inertia::render('Users/Index', [

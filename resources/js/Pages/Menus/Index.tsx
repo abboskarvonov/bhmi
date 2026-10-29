@@ -1,5 +1,6 @@
 import DeleteModal from "@/Components/Custom/DeleteModal";
 import SearchControls from "@/Components/Custom/SearchControls";
+import { FiPlus } from "react-icons/fi";
 import { Button } from "@/Components/ui/button";
 import { useDeleteItem } from "@/hooks/useDeleteItem";
 import { useTable } from "@/hooks/useTable";
@@ -64,20 +65,23 @@ function Index({ menus }: MenuIndexProps) {
         >
             <Head title="Menyular" />
 
-            <div className="py-12">
-                <div className="container mx-auto sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white p-6 shadow-sm dark:bg-gray-800 sm:rounded-lg">
+            <div>
+                <div className="w-full">
+                    <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm sm:p-6">
                         <SearchControls
                             searchTerm={searchTerm}
                             onSearchChange={setSearchTerm}
-                        />
-
-                        <Link href={route("menus.create")}>
-                            <Button>Menyu yaratish</Button>
-                        </Link>
+                        >
+                            <Button asChild className="h-10 rounded-xl">
+                                <Link href={route("menus.create")}>
+                                    <FiPlus className="h-4 w-4" />
+                                    Menyu yaratish
+                                </Link>
+                            </Button>
+                        </SearchControls>
 
                         {/* Table Component */}
-                        <div className="mt-10">
+                        <div>
                             <TableComponent
                                 data={sortedData}
                                 onDelete={handleDeleteClick}

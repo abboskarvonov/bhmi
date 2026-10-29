@@ -10,14 +10,7 @@ import {
 } from "@/Components/ui/table";
 import { TableComponentProps } from "@/types/menu";
 import { Link } from "@inertiajs/react";
-import {
-    FaEye,
-    FaPen,
-    FaSort,
-    FaSortDown,
-    FaSortUp,
-    FaTrash,
-} from "react-icons/fa6";
+import { FaPen, FaSort, FaSortDown, FaSortUp, FaTrash } from "react-icons/fa6";
 
 function TableComponent({
     data,
@@ -37,7 +30,7 @@ function TableComponent({
                             onClick={() => onSortChange("name")}
                             className="flex items-center gap-1"
                         >
-                            Title{" "}
+                            Nomi{" "}
                             {sortField === "name" ? (
                                 sortDirection === "asc" ? (
                                     <FaSortUp />
@@ -55,7 +48,7 @@ function TableComponent({
                             onClick={() => onSortChange("created_at")}
                             className="flex items-center gap-1"
                         >
-                            Time{" "}
+                            Qo'shilgan{" "}
                             {sortField === "created_at" ? (
                                 sortDirection === "asc" ? (
                                     <FaSortUp />
@@ -67,7 +60,7 @@ function TableComponent({
                             )}
                         </button>
                     </TableHead>
-                    <TableHead className="text-right">Action</TableHead>
+                    <TableHead className="text-right">Amallar</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -80,28 +73,33 @@ function TableComponent({
                             <TableCell>
                                 <TimeAgo createdAt={item.created_at} />
                             </TableCell>
-                            <TableCell className="space-x-2 text-right">
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    onClick={() => onView(item)}
-                                >
-                                    <FaEye />
-                                </Button>
-                                <Link
-                                    href={route("menus.edit", { id: item.id })}
-                                >
-                                    <Button size={"icon"}>
-                                        <FaPen />
+                            <TableCell className="whitespace-nowrap text-right">
+                                <div className="inline-flex items-center gap-1">
+                                    <Button
+                                        asChild
+                                        size="icon"
+                                        variant="ghost"
+                                        className="h-8 w-8 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800"
+                                        title="Tahrirlash"
+                                    >
+                                        <Link
+                                            href={route("menus.edit", {
+                                                id: item.id,
+                                            })}
+                                        >
+                                            <FaPen />
+                                        </Link>
                                     </Button>
-                                </Link>
-                                <Button
-                                    variant="destructive"
-                                    size="icon"
-                                    onClick={() => onDelete(item)}
-                                >
-                                    <FaTrash />
-                                </Button>
+                                    <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                        title="O'chirish"
+                                        onClick={() => onDelete(item)}
+                                    >
+                                        <FaTrash />
+                                    </Button>
+                                </div>
                             </TableCell>
                         </TableRow>
                     ))

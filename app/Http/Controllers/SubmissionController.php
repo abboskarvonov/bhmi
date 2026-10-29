@@ -14,7 +14,7 @@ class SubmissionController extends Controller
         $submissions = ArticleSubmission::with('user:id,name,email')
             ->latest()
             ->orderByDesc('id')
-            ->paginate(15)
+            ->paginate(20)
             ->withQueryString();
 
         return Inertia::render('Dashboard/Submissions/Index', [

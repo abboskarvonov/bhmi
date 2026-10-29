@@ -42,11 +42,11 @@ class AdminPanelTest extends TestCase
         ]);
 
         $this->actingAs($this->admin())
-            ->get('/dashboard/articles?page=3')
+            ->get('/dashboard/articles?page=2')
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Articles/Index')
-                ->where('articles.current_page', 3)
-                ->where('articles.last_page', 3)
+                ->where('articles.current_page', 2)
+                ->where('articles.last_page', 2)
                 ->where('articles.total', 26)
                 ->has('articles.data', 6));
 
@@ -141,14 +141,14 @@ class AdminPanelTest extends TestCase
     public function test_admin_submissions_are_paginated(): void
     {
         $user = User::factory()->create();
-        foreach (range(1, 20) as $i) {
+        foreach (range(1, 25) as $i) {
             ArticleSubmission::create(['user_id' => $user->id, 'name' => "Ariza {$i}"]);
         }
 
         $this->actingAs($this->admin())
             ->get('/dashboard/submissions?page=2')
             ->assertInertia(fn (Assert $page) => $page
-                ->where('submissions.total', 20)
+                ->where('submissions.total', 25)
                 ->has('submissions.data', 5));
     }
 
@@ -157,5 +157,24 @@ class AdminPanelTest extends TestCase
         foreach (['/', '/members', '/statue', '/requirements', '/article', '/archive', '/search?q=x'] as $url) {
             $this->get($url)->assertOk();
         }
+    }
+
+    public function test_dashboard_shows_role_specific_stats(): void
+    {
+        $user = User::factory()->create();
+        ArticleSubmission::create(['user_id' => $user->id, 'name' => 'Mening arizam']);
+
+        $this->actingAs($this->admin())->get('/dashboard')
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Dashboard')
+                ->where('stats.pending', 1)
+                ->where('pendingSubmissions', 1)
+                ->has('latestArticles'));
+
+        $this->actingAs($user)->get('/dashboard')
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('stats.total', 1)
+                ->where('pendingSubmissions', 0)
+                ->missing('latestArticles'));
     }
 }

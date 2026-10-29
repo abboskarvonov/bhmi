@@ -6,6 +6,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import clsx from "clsx";
 import { Head, Link } from "@inertiajs/react";
 import SearchControls from "@/Components/Custom/SearchControls";
+import { FiPlus } from "react-icons/fi";
 import { Button } from "@/Components/ui/button";
 import Pagination from "@/Components/Custom/Pagination";
 import DeleteModal from "@/Components/Custom/DeleteModal";
@@ -19,13 +20,8 @@ function Index({ articles, filters }: ArticleIndexProps) {
     const [selectedItem, setSelectedItem] = useState<Article | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const {
-        searchTerm,
-        setSearchTerm,
-        sortField,
-        sortDirection,
-        handleSort,
-    } = useServerTable<Article>("articles.index", filters);
+    const { searchTerm, setSearchTerm, sortField, sortDirection, handleSort } =
+        useServerTable<Article>("articles.index", filters);
 
     const handleDeleteClick = (article: Article) => {
         setSelectedItem(article);
@@ -54,20 +50,23 @@ function Index({ articles, filters }: ArticleIndexProps) {
         >
             <Head title="Maqolalar" />
 
-            <div className="py-12">
-                <div className="container mx-auto sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white p-6 shadow-sm dark:bg-gray-800 sm:rounded-lg">
+            <div>
+                <div className="w-full">
+                    <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm sm:p-6">
                         <SearchControls
                             searchTerm={searchTerm}
                             onSearchChange={setSearchTerm}
-                        />
-
-                        <Link href={route("articles.create")}>
-                            <Button>Maqola yaratish</Button>
-                        </Link>
+                        >
+                            <Button asChild className="h-10 rounded-xl">
+                                <Link href={route("articles.create")}>
+                                    <FiPlus className="h-4 w-4" />
+                                    Maqola yaratish
+                                </Link>
+                            </Button>
+                        </SearchControls>
 
                         {/* Table Component */}
-                        <div className="mt-10">
+                        <div>
                             <TableComponent
                                 data={data}
                                 offset={from ?? 1}

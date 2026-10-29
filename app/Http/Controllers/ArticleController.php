@@ -27,7 +27,7 @@ class ArticleController extends Controller
             })
             ->when($sort, fn ($q) => $q->orderBy($sort, $direction), fn ($q) => $q->latest())
             ->orderByDesc('id')
-            ->paginate(10)
+            ->paginate(20)
             ->withQueryString();
 
         return Inertia::render('Articles/Index', [

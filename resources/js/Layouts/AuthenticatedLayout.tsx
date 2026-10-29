@@ -1,233 +1,364 @@
-import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
-import NavLink from "@/Components/NavLink";
-import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
-import { Link, usePage } from "@inertiajs/react";
-import { PropsWithChildren, ReactNode, useState } from "react";
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetTitle,
+} from "@/Components/ui/sheet";
+import { Link, router, usePage } from "@inertiajs/react";
+import clsx from "clsx";
+import { PropsWithChildren, ReactNode, useEffect, useState } from "react";
+import { IconType } from "react-icons";
+import {
+    FiBookOpen,
+    FiChevronDown,
+    FiExternalLink,
+    FiFileText,
+    FiGrid,
+    FiInbox,
+    FiInfo,
+    FiList,
+    FiLogOut,
+    FiMenu,
+    FiSend,
+    FiUser,
+    FiUsers,
+} from "react-icons/fi";
+
+interface NavItem {
+    label: string;
+    href: string;
+    icon: IconType;
+    active: boolean;
+    badge?: number;
+}
+
+interface NavSection {
+    title?: string;
+    items: NavItem[];
+}
+
+function useNavigation(): NavSection[] {
+    const { auth, pendingSubmissions } = usePage().props;
+    const current = (pattern: string) => route().current(pattern);
+
+    const main: NavSection = {
+        items: [
+            {
+                label: "Dashboard",
+                href: route("dashboard"),
+                icon: FiGrid,
+                active: current("dashboard"),
+            },
+        ],
+    };
+
+    if (auth.user.isAdmin !== 1) {
+        return [
+            main,
+            {
+                title: "Maqolalarim",
+                items: [
+                    {
+                        label: "Maqola yuborish",
+                        href: route("submissions.create"),
+                        icon: FiSend,
+                        active: current("submissions.create"),
+                    },
+                    {
+                        label: "Yuborilganlar",
+                        href: route("submissions.index"),
+                        icon: FiList,
+                        active: current("submissions.index"),
+                    },
+                ],
+            },
+        ];
+    }
+
+    const sections: NavSection[] = [
+        main,
+        {
+            title: "Kontent",
+            items: [
+                {
+                    label: "Jurnallar",
+                    href: route("journal-issues.index"),
+                    icon: FiBookOpen,
+                    active: current("journal-issues.*"),
+                },
+                {
+                    label: "Maqolalar",
+                    href: route("articles.index"),
+                    icon: FiFileText,
+                    active: current("articles.*"),
+                },
+                {
+                    label: "Jurnal ma'lumotlari",
+                    href: route("abouts.index"),
+                    icon: FiInfo,
+                    active: current("abouts.*"),
+                },
+                {
+                    label: "Menyular",
+                    href: route("menus.index"),
+                    icon: FiList,
+                    active: current("menus.*"),
+                },
+            ],
+        },
+        {
+            title: "Tahririyat",
+            items: [
+                {
+                    label: "Arizalar",
+                    href: route("submissions.admin.index"),
+                    icon: FiInbox,
+                    active: current("submissions.admin.*"),
+                    badge: pendingSubmissions,
+                },
+            ],
+        },
+    ];
+
+    if (auth.isSuperAdmin) {
+        sections.push({
+            title: "Tizim",
+            items: [
+                {
+                    label: "Foydalanuvchilar",
+                    href: route("users.index"),
+                    icon: FiUsers,
+                    active: current("users.*"),
+                },
+            ],
+        });
+    }
+
+    return sections;
+}
+
+const initials = (name: string) =>
+    name
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0]?.toUpperCase())
+        .join("");
+
+function SidebarContent() {
+    const { user } = usePage().props.auth;
+    const sections = useNavigation();
+
+    return (
+        <div className="flex h-full flex-col bg-gradient-to-b from-emerald-950 via-emerald-950 to-emerald-900 text-emerald-50">
+            {/* Brend */}
+            <Link
+                href="/"
+                className="flex h-16 shrink-0 items-center gap-3 border-b border-white/10 px-5"
+            >
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white p-1 shadow-sm">
+                    <img
+                        src="/img/logo_min.webp"
+                        alt="BHMI logotipi"
+                        className="h-full w-full object-contain"
+                    />
+                </span>
+                <span className="leading-tight">
+                    <span className="block text-sm font-bold tracking-wide text-white">
+                        BHMI
+                    </span>
+                    <span className="block text-[11px] text-emerald-200/60">
+                        Boshqaruv paneli
+                    </span>
+                </span>
+            </Link>
+
+            {/* Navigatsiya */}
+            <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-5">
+                {sections.map((section, index) => (
+                    <div key={section.title ?? index}>
+                        {section.title && (
+                            <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-emerald-300/50">
+                                {section.title}
+                            </p>
+                        )}
+                        <ul className="space-y-1">
+                            {section.items.map((item) => (
+                                <li key={item.href}>
+                                    <Link
+                                        href={item.href}
+                                        aria-current={
+                                            item.active ? "page" : undefined
+                                        }
+                                        className={clsx(
+                                            "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                                            item.active
+                                                ? "bg-white/10 text-white"
+                                                : "text-emerald-100/70 hover:bg-white/5 hover:text-white",
+                                        )}
+                                    >
+                                        {item.active && (
+                                            <span className="absolute inset-y-2 left-0 w-1 rounded-r-full bg-emerald-400" />
+                                        )}
+                                        <item.icon
+                                            className={clsx(
+                                                "h-[18px] w-[18px] shrink-0",
+                                                item.active
+                                                    ? "text-emerald-300"
+                                                    : "text-emerald-200/50 group-hover:text-emerald-200",
+                                            )}
+                                        />
+                                        <span className="flex-1 truncate">
+                                            {item.label}
+                                        </span>
+                                        {!!item.badge && (
+                                            <span className="rounded-full bg-amber-400 px-2 py-0.5 text-[11px] font-bold text-amber-950">
+                                                {item.badge}
+                                            </span>
+                                        )}
+                                    </Link>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                ))}
+            </nav>
+
+            {/* Foydalanuvchi */}
+            <div className="border-t border-white/10 p-3">
+                <div className="flex items-center gap-3 rounded-xl bg-white/5 p-3">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-white">
+                        {initials(user.name)}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-white">
+                            {user.name}
+                        </p>
+                        <p className="truncate text-xs text-emerald-200/60">
+                            {user.email}
+                        </p>
+                    </div>
+                    <Link
+                        href={route("logout")}
+                        method="post"
+                        as="button"
+                        title="Chiqish"
+                        aria-label="Chiqish"
+                        className="rounded-lg p-2 text-emerald-200/60 transition-colors hover:bg-white/10 hover:text-white"
+                    >
+                        <FiLogOut className="h-4 w-4" />
+                    </Link>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 export default function Authenticated({
     header,
     children,
 }: PropsWithChildren<{ header?: ReactNode }>) {
-    const { user, isSuperAdmin } = usePage().props.auth;
+    const { user } = usePage().props.auth;
+    const [mobileOpen, setMobileOpen] = useState(false);
 
-    const [showingNavigationDropdown, setShowingNavigationDropdown] =
-        useState(false);
+    // Sahifa almashganda mobil menyuni yopish
+    useEffect(() => router.on("navigate", () => setMobileOpen(false)), []);
 
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-16 justify-between">
-                        <div className="flex">
-                            <div className="flex shrink-0 items-center">
-                                <Link href="/">
-                                    <ApplicationLogo />
-                                </Link>
-                            </div>
+        <div className="min-h-screen bg-slate-50">
+            {/* Desktop sidebar */}
+            <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 lg:block">
+                <SidebarContent />
+            </aside>
 
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    href={route("dashboard")}
-                                    active={route().current("dashboard")}
-                                >
-                                    Dashboard
-                                </NavLink>
-                                {user.isAdmin === 1 && (
-                                    <>
-                                        <NavLink
-                                            href={route("menus.index")}
-                                            active={route().current(
-                                                "menus.index",
-                                            )}
-                                        >
-                                            Menyular
-                                        </NavLink>
-                                        <NavLink
-                                            href={route("abouts.index")}
-                                            active={route().current(
-                                                "abouts.index",
-                                            )}
-                                        >
-                                            Jurnal ma'lumotlari
-                                        </NavLink>
-                                        <NavLink
-                                            href={route("journal-issues.index")}
-                                            active={route().current(
-                                                "journal-issues.index",
-                                            )}
-                                        >
-                                            Jurnallar
-                                        </NavLink>
-                                        <NavLink
-                                            href={route("articles.index")}
-                                            active={route().current(
-                                                "articles.index",
-                                            )}
-                                        >
-                                            Maqolalar
-                                        </NavLink>
-                                        <NavLink
-                                            href={route("submissions.admin.index")}
-                                            active={route().current(
-                                                "submissions.admin.*",
-                                            )}
-                                        >
-                                            Arizalar
-                                        </NavLink>
-                                        {isSuperAdmin && (
-                                            <NavLink
-                                                href={route("users.index")}
-                                                active={route().current(
-                                                    "users.*",
-                                                )}
-                                            >
-                                                Foydalanuvchilar
-                                            </NavLink>
-                                        )}
-                                    </>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="hidden sm:ms-6 sm:flex sm:items-center">
-                            <div className="relative ms-3">
-                                <Dropdown>
-                                    <Dropdown.Trigger>
-                                        <span className="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
-                                            >
-                                                {user.name}
-
-                                                <svg
-                                                    className="-me-0.5 ms-2 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </Dropdown.Trigger>
-
-                                    <Dropdown.Content>
-                                        <Dropdown.Link
-                                            href={route("profile.edit")}
-                                        >
-                                            Profile
-                                        </Dropdown.Link>
-                                        <Dropdown.Link
-                                            href={route("logout")}
-                                            method="post"
-                                            as="button"
-                                        >
-                                            Log Out
-                                        </Dropdown.Link>
-                                    </Dropdown.Content>
-                                </Dropdown>
-                            </div>
-                        </div>
-
-                        <div className="-me-2 flex items-center sm:hidden">
-                            <button
-                                onClick={() =>
-                                    setShowingNavigationDropdown(
-                                        (previousState) => !previousState,
-                                    )
-                                }
-                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400"
-                            >
-                                <svg
-                                    className="h-6 w-6"
-                                    stroke="currentColor"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        className={
-                                            !showingNavigationDropdown
-                                                ? "inline-flex"
-                                                : "hidden"
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        className={
-                                            showingNavigationDropdown
-                                                ? "inline-flex"
-                                                : "hidden"
-                                        }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div
-                    className={
-                        (showingNavigationDropdown ? "block" : "hidden") +
-                        " sm:hidden"
-                    }
+            {/* Mobil sidebar */}
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+                <SheetContent
+                    side="left"
+                    className="w-72 max-w-[85vw] border-0 p-0 sm:max-w-72 [&>button]:text-white"
                 >
-                    <div className="space-y-1 pb-3 pt-2">
-                        <ResponsiveNavLink
-                            href={route("dashboard")}
-                            active={route().current("dashboard")}
-                        >
-                            Dashboard
-                        </ResponsiveNavLink>
-                    </div>
+                    <SheetTitle className="sr-only">Menyu</SheetTitle>
+                    <SheetDescription className="sr-only">
+                        Boshqaruv paneli bo'limlari
+                    </SheetDescription>
+                    <SidebarContent />
+                </SheetContent>
+            </Sheet>
 
-                    <div className="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600">
-                        <div className="px-4">
-                            <div className="text-base font-medium text-gray-800 dark:text-gray-200">
-                                {user.name}
-                            </div>
-                            <div className="text-sm font-medium text-gray-500">
-                                {user.email}
-                            </div>
-                        </div>
+            <div className="lg:pl-64">
+                {/* Topbar */}
+                <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-gray-200/80 bg-white/80 px-4 backdrop-blur-md sm:px-6 lg:px-8">
+                    <button
+                        type="button"
+                        onClick={() => setMobileOpen(true)}
+                        className="-ml-1 rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 lg:hidden"
+                        aria-label="Menyuni ochish"
+                    >
+                        <FiMenu className="h-5 w-5" />
+                    </button>
 
-                        <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route("profile.edit")}>
-                                Profile
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                method="post"
-                                href={route("logout")}
-                                as="button"
-                            >
-                                Log Out
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
-            {header && (
-                <header className="bg-white shadow dark:bg-gray-800">
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                    <div className="min-w-0 flex-1 truncate [&_h2]:truncate [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:text-gray-900">
                         {header}
                     </div>
-                </header>
-            )}
 
-            <main>{children}</main>
+                    <a
+                        href="/"
+                        target="_blank"
+                        rel="noopener"
+                        className="hidden items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 sm:inline-flex"
+                    >
+                        <FiExternalLink className="h-4 w-4" />
+                        Saytni ko'rish
+                    </a>
+
+                    <Dropdown>
+                        <Dropdown.Trigger>
+                            <button
+                                type="button"
+                                className="flex items-center gap-2 rounded-full py-1 pl-1 pr-2 transition-colors hover:bg-gray-100"
+                            >
+                                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-xs font-bold text-white">
+                                    {initials(user.name)}
+                                </span>
+                                <span className="hidden max-w-[10rem] truncate text-sm font-medium text-gray-700 md:block">
+                                    {user.name}
+                                </span>
+                                <FiChevronDown className="hidden h-4 w-4 text-gray-400 md:block" />
+                            </button>
+                        </Dropdown.Trigger>
+
+                        <Dropdown.Content>
+                            <div className="border-b border-gray-100 px-4 py-3">
+                                <p className="truncate text-sm font-semibold text-gray-900">
+                                    {user.name}
+                                </p>
+                                <p className="truncate text-xs text-gray-500">
+                                    {user.email}
+                                </p>
+                            </div>
+                            <Dropdown.Link href={route("profile.edit")}>
+                                <span className="flex items-center gap-2">
+                                    <FiUser className="h-4 w-4" /> Profil
+                                </span>
+                            </Dropdown.Link>
+                            <Dropdown.Link
+                                href={route("logout")}
+                                method="post"
+                                as="button"
+                            >
+                                <span className="flex items-center gap-2 text-red-600">
+                                    <FiLogOut className="h-4 w-4" /> Chiqish
+                                </span>
+                            </Dropdown.Link>
+                        </Dropdown.Content>
+                    </Dropdown>
+                </header>
+
+                <main className="px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+                    {children}
+                </main>
+            </div>
         </div>
     );
 }

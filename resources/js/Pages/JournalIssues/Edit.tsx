@@ -68,9 +68,9 @@ function Edit({ journal_issue }: { journal_issue: Journal }) {
         >
             <Head title={`Jurnalni o'zgartirish - ${journal_issue.name}`} />
 
-            <div className="py-12">
-                <div className="container mx-auto sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white p-6 shadow-sm dark:bg-gray-800 sm:rounded-lg">
+            <div>
+                <div className="w-full">
+                    <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm sm:p-6">
                         <form onSubmit={submit} className="space-y-5">
                             <div>
                                 <Label>Name</Label>

@@ -59,11 +59,11 @@ function Show({ submission }: Props) {
         >
             <Head title={`Ariza #${submission.id}`} />
 
-            <div className="py-12">
-                <div className="container mx-auto max-w-3xl sm:px-6 lg:px-8">
+            <div>
+                <div className="w-full">
                     <div className="space-y-6">
                         {/* Info card */}
-                        <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                        <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm">
                             <div className="h-1 w-full bg-gradient-to-r from-emerald-700 to-teal-600" />
                             <div className="p-6 space-y-5">
                                 <div className="flex items-start justify-between gap-4">
@@ -114,7 +114,7 @@ function Show({ submission }: Props) {
                         </div>
 
                         {/* Admin action card */}
-                        <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                        <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-sm">
                             <div className="h-1 w-full bg-gradient-to-r from-emerald-700 to-teal-600" />
                             <div className="p-6">
                                 <h3 className="mb-5 text-base font-semibold text-gray-800">

@@ -15,7 +15,7 @@ class AboutController extends Controller
      */
     public function index()
     {
-        $abouts = About::paginate(10);
+        $abouts = About::paginate(20);
         return Inertia::render('Abouts/Index', [
             'abouts' => $abouts
         ]);

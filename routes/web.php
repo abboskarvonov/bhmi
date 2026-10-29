@@ -3,6 +3,7 @@
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ArticleSubmissionController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\JournalIssueController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\PageController;
@@ -10,7 +11,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubmissionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', [PageController::class, 'index'])->name('home');
 Route::get('/members', [PageController::class, 'members'])->name('members');
@@ -22,9 +22,7 @@ Route::get('/archive', [PageController::class, 'archive'])->name('archive');
 Route::get('/archive/{archive}', [PageController::class, 'archiveview'])->name('archiveview');
 Route::get('/search', [PageController::class, 'search'])->name('search');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

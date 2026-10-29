@@ -13,6 +13,7 @@ export type PageProps<
         user: User;
         isSuperAdmin: boolean;
     };
+    pendingSubmissions: number;
     flash?: {
         success?: string | null;
         error?: string | null;

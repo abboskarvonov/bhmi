@@ -37,7 +37,7 @@ function TableComponent({
                             onClick={() => onSortChange("name")}
                             className="flex items-center gap-1"
                         >
-                            Title{" "}
+                            Nomi{" "}
                             {sortField === "name" ? (
                                 sortDirection === "asc" ? (
                                     <FaSortUp />
@@ -55,7 +55,7 @@ function TableComponent({
                             onClick={() => onSortChange("created_at")}
                             className="flex items-center gap-1"
                         >
-                            Time{" "}
+                            Qo'shilgan{" "}
                             {sortField === "created_at" ? (
                                 sortDirection === "asc" ? (
                                     <FaSortUp />
@@ -67,7 +67,7 @@ function TableComponent({
                             )}
                         </button>
                     </TableHead>
-                    <TableHead className="text-right">Action</TableHead>
+                    <TableHead className="text-right">Amallar</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -80,32 +80,48 @@ function TableComponent({
                             <TableCell>
                                 <TimeAgo createdAt={item.created_at} />
                             </TableCell>
-                            <TableCell className="space-x-2 text-right">
-                                <Link
-                                    href={route("articles.show", {
-                                        id: item.id,
-                                    })}
-                                >
-                                    <Button size={"icon"} variant={"outline"}>
-                                        <FaEye />
+                            <TableCell className="whitespace-nowrap text-right">
+                                <div className="inline-flex items-center gap-1">
+                                    <Button
+                                        asChild
+                                        size="icon"
+                                        variant="ghost"
+                                        className="h-8 w-8 text-gray-500 hover:text-gray-900"
+                                        title="Ko'rish"
+                                    >
+                                        <Link
+                                            href={route("articles.show", {
+                                                id: item.id,
+                                            })}
+                                        >
+                                            <FaEye />
+                                        </Link>
                                     </Button>
-                                </Link>
-                                <Link
-                                    href={route("articles.edit", {
-                                        id: item.id,
-                                    })}
-                                >
-                                    <Button size={"icon"}>
-                                        <FaPen />
+                                    <Button
+                                        asChild
+                                        size="icon"
+                                        variant="ghost"
+                                        className="h-8 w-8 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800"
+                                        title="Tahrirlash"
+                                    >
+                                        <Link
+                                            href={route("articles.edit", {
+                                                id: item.id,
+                                            })}
+                                        >
+                                            <FaPen />
+                                        </Link>
                                     </Button>
-                                </Link>
-                                <Button
-                                    variant="destructive"
-                                    size="icon"
-                                    onClick={() => onDelete(item)}
-                                >
-                                    <FaTrash />
-                                </Button>
+                                    <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                        title="O'chirish"
+                                        onClick={() => onDelete(item)}
+                                    >
+                                        <FaTrash />
+                                    </Button>
+                                </div>
                             </TableCell>
                         </TableRow>
                     ))

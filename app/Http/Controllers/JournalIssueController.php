@@ -23,7 +23,7 @@ class JournalIssueController extends Controller
             ->when($search !== '', fn ($q) => $q->where('name', 'like', '%' . addcslashes($search, '%_\\') . '%'))
             ->when($sort, fn ($q) => $q->orderBy($sort, $direction), fn ($q) => $q->latest())
             ->orderByDesc('id')
-            ->paginate(10)
+            ->paginate(20)
             ->withQueryString();
 
         return Inertia::render('JournalIssues/Index', [

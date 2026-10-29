@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\ArticleSubmission;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -35,6 +36,10 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 'isSuperAdmin' => $request->user()?->isSuperAdmin() ?? false,
             ],
+            // Sidebar'dagi "Arizalar" badge'i uchun
+            'pendingSubmissions' => fn () => $request->user()?->isAdmin
+                ? ArticleSubmission::where('status', 'pending')->count()
+                : 0,
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
