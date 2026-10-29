@@ -1,20 +1,14 @@
-import { Article, ArticleEditData } from "@/types/article";
-import { Head, useForm } from "@inertiajs/react";
-import { toast } from "sonner";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Label } from "@/Components/ui/label";
-import { Input } from "@/Components/ui/input";
-import renderError from "@/utils/RenderError";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/Components/ui/popover";
-import { Button } from "@/Components/ui/button";
-import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-import { Calendar } from "@/Components/ui/calendar";
+    DateField,
+    Field,
+    FileField,
+    FormActions,
+    FormHeader,
+    FormSection,
+    FormShell,
+} from "@/Components/Custom/Form";
+import { Input } from "@/Components/ui/input";
+import RichEditor from "@/Components/ui/RichEditor";
 import {
     Select,
     SelectContent,
@@ -23,7 +17,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
-import RichEditor from "@/Components/ui/RichEditor";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Article, ArticleEditData } from "@/types/article";
+import { Head, useForm } from "@inertiajs/react";
+import { toast } from "sonner";
 
 interface JournalProps {
     id: string;
@@ -81,208 +78,170 @@ function Edit({ article, journals }: Props) {
     };
 
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    {`Maqolani o'zgartirish - ${article.name}`}
-                </h2>
-            }
-        >
+        <AuthenticatedLayout header={<h2>Maqolalar</h2>}>
             <Head title={`Maqolani o'zgartirish - ${article.name}`} />
 
-            <div>
-                <div className="w-full">
-                    <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm sm:p-6">
-                        <form onSubmit={submit} className="space-y-5">
-                            <div className="grid grid-cols-3 gap-8">
-                                <div>
-                                    <Label>Name</Label>
+            <FormShell onSubmit={submit}>
+                <FormHeader
+                    title="Maqolani tahrirlash"
+                    description={article.name}
+                    backHref={route("articles.index")}
+                />
+
+                <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+                    <div className="space-y-6 xl:col-span-2">
+                        <FormSection title="Asosiy ma'lumotlar">
+                            <Field
+                                label="Maqola nomi"
+                                htmlFor="name"
+                                required
+                                error={errors.name}
+                            >
+                                <Input
+                                    id="name"
+                                    value={data.name}
+                                    placeholder="Maqola sarlavhasi"
+                                    onChange={(e) =>
+                                        setData("name", e.target.value)
+                                    }
+                                />
+                            </Field>
+                            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+                                <Field
+                                    label="Muallif(lar)"
+                                    htmlFor="author"
+                                    required
+                                    error={errors.author}
+                                    className="sm:col-span-2"
+                                >
                                     <Input
-                                        type="text"
-                                        placeholder="Name"
-                                        value={data.name}
-                                        name="name"
-                                        onChange={(e) =>
-                                            setData("name", e.target.value)
-                                        }
-                                    />
-                                    {renderError(errors, "name")}
-                                </div>
-                                <div>
-                                    <Label>Muallif</Label>
-                                    <Input
-                                        type="text"
-                                        placeholder="Author"
+                                        id="author"
                                         value={data.author}
-                                        name="author"
+                                        placeholder="F.I.Sh."
                                         onChange={(e) =>
                                             setData("author", e.target.value)
                                         }
                                     />
-                                    {renderError(errors, "author")}
-                                </div>
-                                <div>
-                                    <Label>Maqola sahifalari</Label>
+                                </Field>
+                                <Field
+                                    label="Sahifalar"
+                                    htmlFor="pages"
+                                    required
+                                    hint="Masalan: 12-18"
+                                    error={errors.pages}
+                                >
                                     <Input
-                                        type="text"
-                                        placeholder="Pages"
+                                        id="pages"
                                         value={data.pages}
-                                        name="pages"
+                                        placeholder="12-18"
                                         onChange={(e) =>
                                             setData("pages", e.target.value)
                                         }
                                     />
-                                    {renderError(errors, "pages")}
-                                </div>
+                                </Field>
                             </div>
+                        </FormSection>
 
-                            <div className="grid grid-cols-3 gap-8">
-                                <div>
-                                    <Label>Jurnalni tanlang</Label>
-                                    <Select
-                                        value={data.journal_issue_id}
-                                        onValueChange={(value) =>
-                                            setData("journal_issue_id", value)
-                                        }
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Jurnalni tanlang" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                {journals.map((journal) => (
-                                                    <SelectItem
-                                                        key={journal.id}
-                                                        value={journal.id.toString()}
-                                                    >
-                                                        {journal.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                    {renderError(errors, "journal_issue_id")}
-                                </div>
-                                <div>
-                                    <Label>Sana</Label>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant={"outline"}
-                                                className={cn(
-                                                    "w-full justify-start text-left font-normal",
-                                                    !data.date &&
-                                                        "text-muted-foreground",
-                                                )}
-                                            >
-                                                <CalendarIcon />
-                                                {data.date ? (
-                                                    format(
-                                                        data.date,
-                                                        "MM-dd-yyyy",
-                                                    )
-                                                ) : (
-                                                    <span>Sanani tanlang</span>
-                                                )}
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent
-                                            className="w-full p-0"
-                                            align="start"
-                                        >
-                                            <Calendar
-                                                mode="single"
-                                                selected={
-                                                    data.date || undefined
-                                                }
-                                                onSelect={(date) =>
-                                                    setData(
-                                                        "date",
-                                                        date ?? null,
-                                                    )
-                                                }
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    {renderError(errors, "date")}
-                                </div>
-                                <div>
-                                    {article.file_url ? (
-                                        <div className="grid pt-6">
-                                            <Button
-                                                variant={"destructive"}
-                                                onClick={handleRemoveFile}
-                                            >
-                                                Faylni o'chirish
-                                            </Button>
-                                        </div>
-                                    ) : (
-                                        <div>
-                                            <Label>Maqola fayli</Label>
-                                            <input
-                                                type="file"
-                                                className="w-full rounded-lg border text-xs file:text-xs dark:border-gray-500"
-                                                onChange={(e) => {
-                                                    if (
-                                                        e.target.files &&
-                                                        e.target.files[0]
-                                                    ) {
-                                                        setData(
-                                                            "file_url",
-                                                            e.target.files[0],
-                                                        );
-                                                    }
-                                                }}
-                                            />
-                                            {renderError(errors, "file_url")}
-                                        </div>
-                                    )}
-                                    {progress && (
-                                        <progress
-                                            value={progress.percentage}
-                                            max="100"
-                                        >
-                                            {progress.percentage}%
-                                        </progress>
-                                    )}
-                                </div>
-                            </div>
+                        <FormSection
+                            title="Mazmuni"
+                            description="Saytdagi maqola sahifasida ko'rsatiladi."
+                        >
+                            <Field
+                                label="Kalit so'zlar"
+                                error={errors.keywords}
+                            >
+                                <RichEditor
+                                    value={data.keywords || ""}
+                                    onChange={(val) => setData("keywords", val)}
+                                    placeholder="Kalit so'zlarni kiriting..."
+                                    minHeight={140}
+                                />
+                            </Field>
+                            <Field
+                                label="Annotatsiya"
+                                error={errors.annotations}
+                            >
+                                <RichEditor
+                                    value={data.annotations || ""}
+                                    onChange={(val) =>
+                                        setData("annotations", val)
+                                    }
+                                    placeholder="Annotatsiya kiriting..."
+                                    minHeight={260}
+                                />
+                            </Field>
+                        </FormSection>
+                    </div>
 
-                            <div className="grid grid-cols-2 gap-8">
-                                <div>
-                                    <Label>Kalit so'zlar</Label>
-                                    <RichEditor
-                                        value={data.keywords || ""}
-                                        onChange={(val) =>
-                                            setData("keywords", val)
-                                        }
-                                        placeholder="Kalit so'zlarni kiriting..."
-                                        minHeight={200}
-                                    />
-                                    {renderError(errors, "keywords")}
-                                </div>
-                                <div>
-                                    <Label>Annotatsiya</Label>
-                                    <RichEditor
-                                        value={data.annotations || ""}
-                                        onChange={(val) =>
-                                            setData("annotations", val)
-                                        }
-                                        placeholder="Annotatsiya kiriting..."
-                                        minHeight={200}
-                                    />
-                                    {renderError(errors, "annotations")}
-                                </div>
-                            </div>
+                    <div className="space-y-6">
+                        <FormSection title="Nashr">
+                            <Field
+                                label="Jurnal soni"
+                                required
+                                error={errors.journal_issue_id}
+                            >
+                                <Select
+                                    value={data.journal_issue_id}
+                                    onValueChange={(value) =>
+                                        setData("journal_issue_id", value)
+                                    }
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Jurnal sonini tanlang" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            {journals.map((journal) => (
+                                                <SelectItem
+                                                    key={journal.id}
+                                                    value={journal.id.toString()}
+                                                >
+                                                    {journal.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </Field>
+                            <Field
+                                label="Nashr sanasi"
+                                required
+                                error={errors.date}
+                            >
+                                <DateField
+                                    value={data.date}
+                                    invalid={!!errors.date}
+                                    onChange={(date) =>
+                                        setData("date", date ?? null)
+                                    }
+                                />
+                            </Field>
+                        </FormSection>
 
-                            <Button type="submit" disabled={processing}>
-                                {processing ? "Yangilanmoqda..." : "Yangilash"}
-                            </Button>
-                        </form>
+                        <FormSection title="Maqola fayli">
+                            <Field label="PDF fayl" error={errors.file_url}>
+                                <FileField
+                                    file={data.file_url}
+                                    onChange={(file) =>
+                                        setData("file_url", file)
+                                    }
+                                    currentPath={article.file_url}
+                                    onRemoveCurrent={handleRemoveFile}
+                                    accept=".pdf,.doc,.docx"
+                                    hint="PDF, DOC yoki DOCX · 10 MB gacha"
+                                    progress={progress?.percentage}
+                                />
+                            </Field>
+                        </FormSection>
                     </div>
                 </div>
-            </div>
+
+                <FormActions
+                    cancelHref={route("articles.index")}
+                    processing={processing}
+                    submitLabel="O'zgarishlarni saqlash"
+                />
+            </FormShell>
         </AuthenticatedLayout>
     );
 }

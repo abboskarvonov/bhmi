@@ -1,8 +1,13 @@
-import { Button } from "@/Components/ui/button";
+import {
+    Field,
+    FormActions,
+    FormHeader,
+    FormSection,
+    FormShell,
+} from "@/Components/Custom/Form";
 import { Input } from "@/Components/ui/input";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Menu } from "@/types/menu";
-import renderError from "@/utils/RenderError";
 import { Head, useForm } from "@inertiajs/react";
 import { toast } from "sonner";
 
@@ -32,48 +37,58 @@ function Edit({ menu }: { menu: Menu }) {
     };
 
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    {`Menyuni o'zgartirish - ${menu.name}`}
-                </h2>
-            }
-        >
+        <AuthenticatedLayout header={<h2>Menyular</h2>}>
             <Head title={`Menyuni o'zgartirish - ${menu.name}`} />
 
-            <div>
-                <div className="w-full">
-                    <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm sm:p-6">
-                        <form onSubmit={submit} className="space-y-5">
+            <FormShell onSubmit={submit}>
+                <FormHeader
+                    title="Menyuni tahrirlash"
+                    description={menu.name}
+                    backHref={route("menus.index")}
+                />
+
+                <div className="max-w-2xl">
+                    <FormSection title="Menyu ma'lumotlari">
+                        <Field
+                            label="Nomi"
+                            htmlFor="name"
+                            required
+                            error={errors.name}
+                        >
                             <Input
-                                type="text"
-                                placeholder="Name"
+                                id="name"
                                 value={data.name}
-                                name="name"
+                                placeholder="Masalan: Jurnal haqida"
                                 onChange={(e) =>
                                     setData("name", e.target.value)
                                 }
                             />
-                            {renderError(errors, "name")}
-
+                        </Field>
+                        <Field
+                            label="Slug"
+                            htmlFor="slug"
+                            required
+                            hint="URL qismi: kichik lotin harflari va tire, masalan jurnal-haqida"
+                            error={errors.slug}
+                        >
                             <Input
-                                type="text"
-                                placeholder="Slug"
+                                id="slug"
                                 value={data.slug}
-                                name="slug"
+                                placeholder="jurnal-haqida"
                                 onChange={(e) =>
                                     setData("slug", e.target.value)
                                 }
                             />
-                            {renderError(errors, "slug")}
-
-                            <Button type="submit" disabled={processing}>
-                                {processing ? "Yangilanmoqda..." : "Yangilash"}
-                            </Button>
-                        </form>
-                    </div>
+                        </Field>
+                    </FormSection>
                 </div>
-            </div>
+
+                <FormActions
+                    cancelHref={route("menus.index")}
+                    processing={processing}
+                    submitLabel="O'zgarishlarni saqlash"
+                />
+            </FormShell>
         </AuthenticatedLayout>
     );
 }

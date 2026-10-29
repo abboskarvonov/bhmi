@@ -1,21 +1,18 @@
+import {
+    DateField,
+    Field,
+    FileField,
+    FormActions,
+    FormHeader,
+    FormSection,
+    FormShell,
+} from "@/Components/Custom/Form";
+import { Input } from "@/Components/ui/input";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Journal, JournalEditData } from "@/types/journal";
 import { Head, useForm } from "@inertiajs/react";
 import React from "react";
 import { toast } from "sonner";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Input } from "@/Components/ui/input";
-import renderError from "@/utils/RenderError";
-import { Label } from "@/Components/ui/label";
-import { Button } from "@/Components/ui/button";
-import { Journal, JournalEditData } from "@/types/journal";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/Components/ui/popover";
-import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-import { Calendar } from "@/Components/ui/calendar";
 
 function Edit({ journal_issue }: { journal_issue: Journal }) {
     const { data, setData, post, put, errors, processing, progress } =
@@ -58,127 +55,79 @@ function Edit({ journal_issue }: { journal_issue: Journal }) {
             },
         });
     };
+
+    const currentFile =
+        typeof journal_issue.file_url === "string"
+            ? journal_issue.file_url
+            : null;
+
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    {`Jurnalni o'zgartirish - ${journal_issue.name}`}
-                </h2>
-            }
-        >
+        <AuthenticatedLayout header={<h2>Jurnallar</h2>}>
             <Head title={`Jurnalni o'zgartirish - ${journal_issue.name}`} />
 
-            <div>
-                <div className="w-full">
-                    <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm sm:p-6">
-                        <form onSubmit={submit} className="space-y-5">
-                            <div>
-                                <Label>Name</Label>
+            <FormShell onSubmit={submit}>
+                <FormHeader
+                    title="Jurnal sonini tahrirlash"
+                    description={journal_issue.name}
+                    backHref={route("journal-issues.index")}
+                />
+
+                <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+                    <div className="xl:col-span-2">
+                        <FormSection title="Asosiy ma'lumotlar">
+                            <Field
+                                label="Son nomi"
+                                htmlFor="name"
+                                required
+                                hint="Masalan: 2026-yil 11-son, Sentyabr"
+                                error={errors.name}
+                            >
                                 <Input
-                                    type="text"
-                                    placeholder="Name"
+                                    id="name"
                                     value={data.name}
+                                    placeholder="2026-yil 11-son, Sentyabr"
                                     onChange={(e) =>
                                         setData("name", e.target.value)
                                     }
                                 />
-                                {renderError(errors, "name")}
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-8">
-                                <div>
-                                    <Label>Sana</Label>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <Button
-                                                variant={"outline"}
-                                                className={cn(
-                                                    "w-full justify-start text-left font-normal",
-                                                    !data.date &&
-                                                        "text-muted-foreground",
-                                                )}
-                                            >
-                                                <CalendarIcon />
-                                                {data.date ? (
-                                                    format(
-                                                        data.date,
-                                                        "MM-dd-yyyy",
-                                                    )
-                                                ) : (
-                                                    <span>Sanani tanlang</span>
-                                                )}
-                                            </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent
-                                            className="w-full p-0"
-                                            align="start"
-                                        >
-                                            <Calendar
-                                                mode="single"
-                                                selected={
-                                                    data.date || undefined
-                                                }
-                                                onSelect={(date) =>
-                                                    setData(
-                                                        "date",
-                                                        date ?? undefined,
-                                                    )
-                                                }
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    {renderError(errors, "date")}
-                                </div>
-                                <div>
-                                    {journal_issue.file_url ? (
-                                        <div className="grid pt-6">
-                                            <Button
-                                                variant={"destructive"}
-                                                onClick={handleRemoveFile}
-                                            >
-                                                Faylni o'chirish
-                                            </Button>
-                                        </div>
-                                    ) : (
-                                        <div>
-                                            <Label>Fayl yuklash</Label>
-                                            <input
-                                                type="file"
-                                                className="w-full rounded-lg border text-xs file:text-xs dark:border-gray-500"
-                                                onChange={(e) => {
-                                                    if (
-                                                        e.target.files &&
-                                                        e.target.files[0]
-                                                    ) {
-                                                        setData(
-                                                            "file_url",
-                                                            e.target.files[0],
-                                                        );
-                                                    }
-                                                }}
-                                            />
-                                            {renderError(errors, "file_url")}
-                                        </div>
-                                    )}
-                                    {progress && (
-                                        <progress
-                                            value={progress.percentage}
-                                            max="100"
-                                        >
-                                            {progress.percentage}%
-                                        </progress>
-                                    )}
-                                </div>
-                            </div>
-
-                            <Button type="submit" disabled={processing}>
-                                {processing ? "Yangilanmoqda..." : "Yangilash"}
-                            </Button>
-                        </form>
+                            </Field>
+                            <Field
+                                label="Chiqish sanasi"
+                                error={errors.date}
+                                className="sm:max-w-xs"
+                            >
+                                <DateField
+                                    value={data.date}
+                                    invalid={!!errors.date}
+                                    onChange={(date) => setData("date", date)}
+                                />
+                            </Field>
+                        </FormSection>
                     </div>
+
+                    <FormSection title="Jurnal fayli">
+                        <Field label="PDF fayl" error={errors.file_url}>
+                            <FileField
+                                file={data.file_url}
+                                onChange={(file) =>
+                                    setData("file_url", file ?? "")
+                                }
+                                currentPath={currentFile}
+                                onRemoveCurrent={handleRemoveFile}
+                                accept=".pdf,.doc,.docx"
+                                hint="PDF, DOC yoki DOCX · 10 MB gacha"
+                                progress={progress?.percentage}
+                            />
+                        </Field>
+                    </FormSection>
                 </div>
-            </div>
+
+                <FormActions
+                    cancelHref={route("journal-issues.index")}
+                    processing={processing}
+                    submitLabel="O'zgarishlarni saqlash"
+                />
+            </FormShell>
         </AuthenticatedLayout>
     );
 }

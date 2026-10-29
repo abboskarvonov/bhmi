@@ -107,3 +107,8 @@
   border-radius: 2px;
   padding: 0 2px;
 }
+
+/* Admin formalarda toast pastki saqlash paneli ustida turadi */
+body:has([data-form-actions]) [data-sonner-toaster][data-y-position="bottom"] {
+    bottom: 80px !important;
+}

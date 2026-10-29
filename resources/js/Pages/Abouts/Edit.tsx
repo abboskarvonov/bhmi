@@ -1,10 +1,12 @@
-import { About } from "@/types/about";
-import { Head, useForm } from "@inertiajs/react";
-import { toast } from "sonner";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import {
+    Field,
+    FileField,
+    FormActions,
+    FormHeader,
+    FormSection,
+    FormShell,
+} from "@/Components/Custom/Form";
 import { Input } from "@/Components/ui/input";
-import renderError from "@/utils/RenderError";
-import { Label } from "@/Components/ui/label";
 import RichEditor from "@/Components/ui/RichEditor";
 import {
     Select,
@@ -14,7 +16,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
-import { Button } from "@/Components/ui/button";
+import { ABOUT_TYPES } from "@/lib/aboutTypes";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { About } from "@/types/about";
+import { Head, useForm } from "@inertiajs/react";
+import { toast } from "sonner";
 
 function Edit({ about }: { about: About }) {
     const { data, setData, post, put, errors, processing, progress } =
@@ -59,124 +65,108 @@ function Edit({ about }: { about: About }) {
         });
     };
 
+    const currentFile =
+        typeof about.file_url === "string" && about.file_url !== ""
+            ? about.file_url
+            : null;
+
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    {`Ma'lumotni o'zgartirish - ${about.name}`}
-                </h2>
-            }
-        >
+        <AuthenticatedLayout header={<h2>Jurnal ma'lumotlari</h2>}>
             <Head title={`Ma'lumotni o'zgartirish - ${about.name}`} />
 
-            <div>
-                <div className="w-full">
-                    <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-4 shadow-sm sm:p-6">
-                        <form onSubmit={submit} className="space-y-5">
-                            <div>
-                                <Label>Name</Label>
+            <FormShell onSubmit={submit}>
+                <FormHeader
+                    title="Sahifa ma'lumotini tahrirlash"
+                    description={about.name}
+                    backHref={route("abouts.index")}
+                />
+
+                <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+                    <div className="xl:col-span-2">
+                        <FormSection title="Kontent">
+                            <Field
+                                label="Sarlavha"
+                                htmlFor="name"
+                                required
+                                error={errors.name}
+                            >
                                 <Input
-                                    type="text"
-                                    placeholder="Name"
+                                    id="name"
                                     value={data.name}
+                                    placeholder="Sahifa sarlavhasi"
                                     onChange={(e) =>
                                         setData("name", e.target.value)
                                     }
                                 />
-                                {renderError(errors, "name")}
-                            </div>
-
-                            <div>
-                                <Label>Content</Label>
+                            </Field>
+                            <Field label="Matn" required error={errors.content}>
                                 <RichEditor
                                     value={data.content || ""}
                                     onChange={(val) => setData("content", val)}
                                     placeholder="Kontent kiriting..."
-                                    minHeight={300}
+                                    minHeight={360}
                                 />
-                                {renderError(errors, "content")}
-                            </div>
+                            </Field>
+                        </FormSection>
+                    </div>
 
-                            <div className="grid grid-cols-2 gap-8">
-                                <div>
-                                    <Label>Sahifa turi</Label>
-                                    <Select
-                                        value={data.type}
-                                        onValueChange={(value) =>
-                                            setData("type", value)
-                                        }
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Sahifa turi" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectGroup>
-                                                <SelectItem value="Jurnal haqida">
-                                                    Jurnal haqida
+                    <div className="space-y-6">
+                        <FormSection title="Sozlamalar">
+                            <Field
+                                label="Sahifa turi"
+                                required
+                                hint="Kontent saytning qaysi sahifasida chiqishini belgilaydi."
+                                error={errors.type}
+                            >
+                                <Select
+                                    value={data.type}
+                                    onValueChange={(value) =>
+                                        setData("type", value)
+                                    }
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Sahifa turini tanlang" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            {ABOUT_TYPES.map((type) => (
+                                                <SelectItem
+                                                    key={type}
+                                                    value={type}
+                                                >
+                                                    {type}
                                                 </SelectItem>
-                                                <SelectItem value="Tahririyat a'zolari">
-                                                    Tahririyat a'zolari
-                                                </SelectItem>
-                                                <SelectItem value="Maqola talablari">
-                                                    Maqola talablari
-                                                </SelectItem>
-                                                <SelectItem value="Tahririyat nizomi">
-                                                    Tahririyat nizomi
-                                                </SelectItem>
-                                            </SelectGroup>
-                                        </SelectContent>
-                                    </Select>
-                                    {renderError(errors, "type")}
-                                </div>
-                                <div>
-                                    {about.file_url ? (
-                                        <div className="grid pt-6">
-                                            <Button
-                                                variant={"destructive"}
-                                                onClick={handleRemoveFile}
-                                            >
-                                                Faylni o'chirish
-                                            </Button>
-                                        </div>
-                                    ) : (
-                                        <div>
-                                            <Label>Fayl yuklash</Label>
-                                            <input
-                                                type="file"
-                                                className="w-full rounded-lg border text-xs file:text-xs dark:border-gray-500"
-                                                onChange={(e) => {
-                                                    if (
-                                                        e.target.files &&
-                                                        e.target.files[0]
-                                                    ) {
-                                                        setData(
-                                                            "file_url",
-                                                            e.target.files[0],
-                                                        );
-                                                    }
-                                                }}
-                                            />
-                                            {renderError(errors, "file_url")}
-                                        </div>
-                                    )}
-                                    {progress && (
-                                        <progress
-                                            value={progress.percentage}
-                                            max="100"
-                                        >
-                                            {progress.percentage}%
-                                        </progress>
-                                    )}
-                                </div>
-                            </div>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </Field>
+                        </FormSection>
 
-                            <Button type="submit" disabled={processing}>
-                                {processing ? "Yangilanmoqda..." : "Yangilash"}
-                            </Button>
-                        </form>
+                        <FormSection title="Ilova fayl">
+                            <Field label="Fayl" error={errors.file_url}>
+                                <FileField
+                                    file={data.file_url}
+                                    onChange={(file) =>
+                                        setData("file_url", file ?? "")
+                                    }
+                                    currentPath={currentFile}
+                                    onRemoveCurrent={handleRemoveFile}
+                                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                    hint="PDF, DOC, DOCX, JPG yoki PNG · 5 MB gacha"
+                                    progress={progress?.percentage}
+                                />
+                            </Field>
+                        </FormSection>
                     </div>
                 </div>
-            </div>
+
+                <FormActions
+                    cancelHref={route("abouts.index")}
+                    processing={processing}
+                    submitLabel="O'zgarishlarni saqlash"
+                />
+            </FormShell>
         </AuthenticatedLayout>
     );
 }
